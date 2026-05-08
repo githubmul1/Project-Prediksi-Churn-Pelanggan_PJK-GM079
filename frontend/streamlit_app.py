@@ -46,13 +46,13 @@ elif menu_terpilih == "Prediksi Churn":
     with st.form("form_prediksi"):
         umur = st.number_input("Umur Pelanggan", min_value=15, max_value=100, value=30)
         tenure = st.slider("Masa Berlangganan (Tenure - Bulan)", 0, 72, 12)
-        monthly_charges = st.number_input("Biaya Bulanan ($)", min_value=0.0, value=50.0)
+        monthly_charges = st.number_input("Biaya Bulanan (Rp)", min_value=0.0, value=50.0)
         
         submit_button = st.form_submit_button("Prediksi Sekarang")
         
         if submit_button:
             # Simulasi hasil prediksi
-            st.info(f"Memproses data: Umur {umur}, Tenure {tenure} bulan, Biaya ${monthly_charges}")
+            st.info(f"Memproses data: Umur {umur}, Tenure {tenure} bulan, Biaya Rp {monthly_charges}")
             st.success("Hasil Prediksi: Pelanggan ini kemungkinan besar **TIDAK CHURN** (Kesetiaan Tinggi).")
 
 elif menu_terpilih == "Tentang Aplikasi":

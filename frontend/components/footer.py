@@ -7,7 +7,7 @@ def render_footer():
     
     with col1:
         st.markdown("**Prediksi Churn Pelanggan**")
-        st.caption("Aplikasi berbasis data untuk memprediksi retensi pelanggan e-commerce.")
+        st.caption("Aplikasi berbasis data untuk memprediksi retensi pelanggan.")
         
     with col2:
         st.markdown("**Navigasi Cepat**")
