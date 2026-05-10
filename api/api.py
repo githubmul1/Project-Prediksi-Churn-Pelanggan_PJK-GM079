@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+# import fungsi dari inference.py
 from src.inference import predict_churn
 
+# tautkan app dari backend FastAPI
 app = FastAPI(
     title="Customer Churn Prediction API",
     description="API untuk prediksi churn pelanggan menggunakan machine learning",
@@ -10,11 +12,13 @@ app = FastAPI(
 )
 
 
+# Halaman root dari app FastAPI
 @app.get("/")
 def home():
     return {"message": "API aktif"}
 
 
+# membuat class untuk data customer
 class CustomerData(BaseModel):
     Age: int
     Subscription_Duration_Months: int
@@ -28,11 +32,13 @@ class CustomerData(BaseModel):
     Contract_Type: str
 
 
+# post endpoint untuk prediksi churn
 @app.post(
     "/predict",
     summary="Prediksi churn customer",
     description="Menerima data customer dan menghasilkan prediksi churn",
 )
+# membuat fungsi untuk menangani request prediksi
 def predict(data: CustomerData):
 
     result = predict_churn(data.model_dump())

@@ -39,6 +39,7 @@ def predict_churn(data: dict):
     # memberikan label berdasarkan prediksi agar lebih manusiawi
     label = "Churn" if prediction == 1 else "Not Churn"
 
+    # kembalikan hasil prediksi untuk ditampilkan
     return {
         "prediction": int(prediction),
         "label": label,

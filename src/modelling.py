@@ -48,7 +48,9 @@ model = RandomForestClassifier(
 # Threshold sudah di tuned
 threshold = 0.4
 
+# ketika MLFlow start awal
 with mlflow.start_run():
+    # aktifkan autolog
     mlflow.autolog()
 
     # Train
@@ -83,6 +85,7 @@ with mlflow.start_run():
     # Simpan model agar dapat digunakan nanti
     joblib.dump(model, MODEL_PATH)
 
+# cetak hasil ke layar
 print(f"Model disimpan di: {MODEL_PATH}")
 print(f"Accuracy : {accuracy:.4f}")
 print(f"Precision: {precision:.4f}")
