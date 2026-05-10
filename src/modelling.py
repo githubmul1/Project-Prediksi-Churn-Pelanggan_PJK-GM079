@@ -85,7 +85,7 @@ with mlflow.start_run():
     # Simpan model agar dapat digunakan nanti
     joblib.dump(model, MODEL_PATH)
 
-# cetak hasil ke layar
+# Tampilkan metrics hasil ke layar
 print(f"Model disimpan di: {MODEL_PATH}")
 print(f"Accuracy : {accuracy:.4f}")
 print(f"Precision: {precision:.4f}")
