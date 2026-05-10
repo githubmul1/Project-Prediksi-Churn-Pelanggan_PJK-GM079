@@ -13,13 +13,12 @@ import numpy as np
 import os
 import joblib
 
+from config import DATA_DIR, MODEL_PATH
+
 mlflow.set_tracking_uri("http://127.0.0.1:5000/")
 mlflow.set_experiment("Churn Prediction")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(BASE_DIR, "")
-
-data = pd.read_csv(os.path.join(MODEL_DIR, "../data/processed/train_processed.csv"))
+data = pd.read_csv(os.path.join(DATA_DIR, "processed/train_processed.csv"))
 
 X = data.drop("Is_Churn", axis=1)
 y = data["Is_Churn"]
@@ -36,7 +35,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 input_example = X_train.iloc[0:5]
 
-# Model
+# Set parameter model
 model = RandomForestClassifier(
     n_estimators=150,
     max_depth=15,
@@ -76,18 +75,15 @@ with mlflow.start_run():
     mlflow.log_metric("roc_auc", roc_auc)
     mlflow.log_param("threshold", threshold)
 
-    # Simpan model
+    # Simpan model ke MLFlow DB
     mlflow.sklearn.log_model(
         sk_model=model, artifact_path="model", input_example=input_example
     )
 
-    # Path file model
-    model_path = os.path.join(MODEL_DIR, "../models/churn_model.pkl")
+    # Simpan model agar dapat digunakan nanti
+    joblib.dump(model, MODEL_PATH)
 
-    # Simpan
-    joblib.dump(model, model_path)
-
-print(f"Model disimpan di: {model_path}")
+print(f"Model disimpan di: {MODEL_PATH}")
 print(f"Accuracy : {accuracy:.4f}")
 print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
