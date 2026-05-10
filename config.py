@@ -1,7 +1,5 @@
 from pathlib import Path
 
-from regex import D
-
 # direktori utama project
 BASE_DIR = Path(__file__).resolve().parent
 

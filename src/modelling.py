@@ -53,16 +53,16 @@ with mlflow.start_run():
     # aktifkan autolog
     mlflow.autolog()
 
-    # Train
+    # Latih model
     model.fit(X_train, y_train)
 
-    # Probabilitas
+    # Hitung probabilitas model
     y_proba = model.predict_proba(X_test)[:, 1]
 
-    # Apply threshold
+    # Aplikasikan threshold kepada probabilitas model
     y_pred = (y_proba >= threshold).astype(int)
 
-    # Metrics
+    # Hitung beberapa metric yang sering dipakai
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
@@ -82,7 +82,7 @@ with mlflow.start_run():
         sk_model=model, artifact_path="model", input_example=input_example
     )
 
-    # Simpan model agar dapat digunakan nanti
+    # Simpan model agar dapat digunakan kembali
     joblib.dump(model, MODEL_PATH)
 
 # Tampilkan metrics hasil ke layar

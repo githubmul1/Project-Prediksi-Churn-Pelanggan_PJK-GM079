@@ -1,14 +1,19 @@
 import joblib
 import pandas as pd
+import shap
+from datetime import datetime
 
 from config import MODEL_PATH, PIPELINE_PATH
+from src.explainer import explain_churn, generate_explanation
 
-# load sekali saat startup
+# Load model and pipeline
 model = joblib.load(MODEL_PATH)
 pipeline = joblib.load(PIPELINE_PATH)
 
+explainer = shap.Explainer(model)
 
-# Fungsi untuk menentukan tingkat risiko churn
+
+# Fungsi untuk menentukan label risiko churn
 def churn_risk_label(probability: float):
 
     if probability >= 0.8:
@@ -21,28 +26,33 @@ def churn_risk_label(probability: float):
         return "Low Risk"
 
 
-# fungsi untuk melakukan prediksi churn
+# Fungsi untuk memprediksi risiko churn
 def predict_churn(data: dict):
 
-    # merubah dict menjadi DataFrame
     df = pd.DataFrame([data])
 
-    # preprocessing data dengan pipeline
     X = pipeline.transform(df)
 
-    # prediction
     prediction = model.predict(X)[0]
-
-    # kemungkinan churn
     probability = model.predict_proba(X)[0][1]
 
-    # memberikan label berdasarkan prediksi agar lebih manusiawi
     label = "Churn" if prediction == 1 else "Not Churn"
 
-    # kembalikan hasil prediksi untuk ditampilkan
+    # ekstraksi nama fitur
+    try:
+        feature_names = pipeline.get_feature_names_out()
+    except:
+        feature_names = df.columns
+
+    # Penjelasan dengan library SHAP
+    explanation = explain_churn(X, feature_names, explainer)
+
+    # Kembalikan nilai dan tampilkan
     return {
-        "prediction": int(prediction),
-        "label": label,
-        "probability_churn": round(float(probability), 3),
-        "risk_level": churn_risk_label(probability),
+        "Prediksi": int(prediction),
+        "Label": label,
+        "Probabilitas Churn": round(float(probability), 3),
+        "Level Risiko": churn_risk_label(probability),
+        "Faktor Utama": generate_explanation(explanation),
+        "Timestamp": datetime.now().isoformat(),
     }
