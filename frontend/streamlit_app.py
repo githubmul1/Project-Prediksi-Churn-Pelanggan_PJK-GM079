@@ -117,7 +117,7 @@ elif menu == "Prediksi Churn":
 elif menu == "Tentang Aplikasi":
     st.subheader("ℹ️ Tentang Aplikasi")
     st.write("""
-    Aplikasi ini dikembangkan untuk mendemonstrasikan integrasi antara model 
+    Aplikasi ini dikembangkan oleh tim PJK-GM079 untuk mendemonstrasikan integrasi antara model 
     Machine Learning (Random Forest/XGBoost) dengan antarmuka web Streamlit.
     
     **Teknologi yang digunakan:**
