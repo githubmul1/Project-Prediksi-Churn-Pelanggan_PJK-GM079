@@ -53,6 +53,6 @@ def predict_churn(data: dict):
         "Label": label,
         "Probabilitas Churn": round(float(probability), 3),
         "Level Risiko": churn_risk_label(probability),
-        "Penjelasan": generate_explanation(explanation),
+        "Penjelasan SHAP": generate_explanation(explanation),
         "Timestamp": datetime.now().isoformat(),
     }
