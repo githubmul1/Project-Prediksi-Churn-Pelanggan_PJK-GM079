@@ -3,18 +3,9 @@ from streamlit_option_menu import option_menu
 
 def render_navbar():
     # UntukLogo dan Menu Navigasi 
-    col1, col2 = st.columns([1, 4])
+    menu_col = st.columns([1])[0] 
     
-    with col1:
-        # Mencoba menampilkan logo 
-        try:
-            st.image("frontend/assets/logo.png", width=120)
-        except:
-            # Fallback jika logo belum ada
-            st.markdown("### 📊 CHURN-APP")
-            
-    with col2:
-        # Menu Navigasi Horizontal
+    with menu_col:
         selected = option_menu(
             menu_title=None, 
             options=["Dashboard", "Prediksi Churn", "Tentang Aplikasi"],
