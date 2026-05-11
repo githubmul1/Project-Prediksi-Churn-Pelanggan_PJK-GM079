@@ -9,7 +9,6 @@ from src.explainer import explain_churn, generate_explanation
 # Load model and pipeline
 model = joblib.load(MODEL_PATH)
 pipeline = joblib.load(PIPELINE_PATH)
-
 explainer = shap.Explainer(model)
 
 
