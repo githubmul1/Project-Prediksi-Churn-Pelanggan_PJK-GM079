@@ -1,10 +1,21 @@
 import joblib
 import pandas as pd
+<<<<<<< HEAD
 import shap
 
 from datetime import datetime
 
 from config import MODEL_PATH
+=======
+from datetime import datetime
+
+try:
+    import shap
+except ImportError:
+    shap = None
+
+from config import MODEL_PATH, PIPELINE_PATH
+>>>>>>> 61dbf02 (perubahan sebelum pull)
 from src.explainer import explain_churn, generate_explanation
 
 # =========================
@@ -12,6 +23,7 @@ from src.explainer import explain_churn, generate_explanation
 # =========================
 model = joblib.load(MODEL_PATH)
 
+<<<<<<< HEAD
 # ambil bagian preprocessing
 preprocessor = model.named_steps["preprocessor"]
 
@@ -20,6 +32,9 @@ rf_model = model.named_steps["model"]
 
 # SHAP explainer
 explainer = shap.Explainer(rf_model)
+=======
+explainer = shap.Explainer(model) if shap is not None else None
+>>>>>>> 61dbf02 (perubahan sebelum pull)
 
 
 # =========================
