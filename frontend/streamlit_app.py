@@ -12,6 +12,7 @@ if project_root not in sys.path:
 from src.inference import predict_churn
 from components.navbar import render_navbar
 from components.footer import render_footer
+from components.dashboard import render_stats_widgets
 
 # Konfigurasi Halaman 
 st.set_page_config(
@@ -25,10 +26,8 @@ menu = render_navbar()
 
 if menu == "Dashboard":
     st.markdown("### <img src='https://cdn-icons-png.flaticon.com/128/1041/1041888.png' width='40'> Dashboard Analisis", unsafe_allow_html=True) 
-    st.markdown("""
-    Selamat datang di **CHURN-APP**! 
-    Aplikasi ini menggunakan Machine Learning untuk memprediksi apakah seorang pelanggan berisiko berhenti berlangganan (*churn*).
-    """)
+    render_stats_widgets()
+    
     st.info("Pilih menu **Prediksi Churn** di navigasi atas untuk memulai analisis.")
 
 elif menu == "Prediksi Churn":
