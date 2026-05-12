@@ -9,15 +9,20 @@ try:
 except ImportError:
     shap = None
 
-from config import MODEL_PATH, PIPELINE_PATH
+from config import MODEL_PATH
 from src.explainer import explain_churn, generate_explanation
 
 # =========================
 # LOAD FULL PIPELINE
 # =========================
 model = joblib.load(MODEL_PATH)
+preprocessor = model.named_steps["preprocessor"]
+rf_model = model.named_steps["model"]
 
-explainer = shap.Explainer(model) if shap is not None else None
+if shap is not None:
+    explainer = shap.Explainer(rf_model) if shap is not None else None
+else:
+    explainer = None
 
 
 # =========================

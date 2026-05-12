@@ -34,7 +34,7 @@ mlflow.set_experiment("Churn Prediction")
 # ==========================================
 # LOAD RAW DATA
 # ==========================================
-data = pd.read_csv(os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv"))
+data = pd.read_csv(os.path.join(DATA_DIR, "raw", "ecommerce_customer_churn_data.csv"))
 
 print(data.head())
 

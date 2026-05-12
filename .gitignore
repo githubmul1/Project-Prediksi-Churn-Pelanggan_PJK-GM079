@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 .vscode/
 data/
+mlflow.db
+mlartifacts/
+models/*.pkl
