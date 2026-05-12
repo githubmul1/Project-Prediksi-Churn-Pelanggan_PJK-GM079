@@ -1,7 +1,19 @@
+# ==========================================
+# IMPORT LIBRARY
+# ==========================================
+import os
+import joblib
 import mlflow
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+
 from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
+from sklearn.ensemble import RandomForestClassifier
+
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -9,67 +21,147 @@ from sklearn.metrics import (
     f1_score,
     roc_auc_score,
 )
-import numpy as np
-import os
-import joblib
 
 from config import DATA_DIR, MODEL_PATH
 
+# ==========================================
+# MLFLOW
+# ==========================================
 mlflow.set_tracking_uri("http://127.0.0.1:5000/")
 mlflow.set_experiment("Churn Prediction")
 
-data = pd.read_csv(os.path.join(DATA_DIR, "processed/train_processed.csv"))
 
+# ==========================================
+# LOAD RAW DATA
+# ==========================================
+data = pd.read_csv(os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv"))
+
+print(data.head())
+
+# ==========================================
+# TARGET & FEATURE
+# ==========================================
 X = data.drop("Is_Churn", axis=1)
 y = data["Is_Churn"]
 
-# Subsampling + stratify
-X_small, _, y_small, _ = train_test_split(
-    X, y, train_size=0.9, stratify=y, random_state=42
-)
-
-# Split train-test
+# ==========================================
+# SPLIT DATA
+# ==========================================
 X_train, X_test, y_train, y_test = train_test_split(
-    X_small, y_small, test_size=0.2, stratify=y_small, random_state=42
-)
-
-input_example = X_train.iloc[0:5]
-
-# Set parameter model
-model = RandomForestClassifier(
-    n_estimators=150,
-    max_depth=15,
-    min_samples_split=10,
-    class_weight="balanced",
-    n_jobs=1,
+    X,
+    y,
+    test_size=0.2,
+    stratify=y,
     random_state=42,
 )
 
-# Threshold sudah di tuned
+# ==========================================
+# KOLOM NUMERIK & KATEGORIK
+# ==========================================
+numerical_columns = [
+    "Age",
+    "Subscription_Duration_Months",
+    "Monthly_Logins",
+    "Last_Purchase_Days_Ago",
+    "App_Usage_Time_Min",
+    "Monthly_Spend",
+    "Discount_Usage_Percentage",
+    "Customer_Support_Calls",
+    "Satisfaction_Score",
+]
+
+categorical_columns = ["Contract_Type"]
+
+# ==========================================
+# PREPROCESSING NUMERIK
+# ==========================================
+numeric_transformer = Pipeline(
+    steps=[
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler()),
+    ]
+)
+
+# ==========================================
+# PREPROCESSING KATEGORIK
+# ==========================================
+categorical_transformer = Pipeline(
+    steps=[
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("onehot", OneHotEncoder(handle_unknown="ignore")),
+    ]
+)
+
+# ==========================================
+# COLUMN TRANSFORMER
+# ==========================================
+preprocessor = ColumnTransformer(
+    transformers=[
+        (
+            "numeric",
+            numeric_transformer,
+            numerical_columns,
+        ),
+        (
+            "categoric",
+            categorical_transformer,
+            categorical_columns,
+        ),
+    ]
+)
+
+
+# ==========================================
+# FULL PIPELINE
+# ==========================================
+full_pipeline = Pipeline(
+    steps=[
+        (
+            "preprocessor",
+            preprocessor,
+        ),
+        (
+            "model",
+            RandomForestClassifier(
+                n_estimators=150,
+                max_depth=15,
+                min_samples_split=10,
+                class_weight="balanced",
+                n_jobs=1,
+                random_state=42,
+            ),
+        ),
+    ]
+)
+
+# ==========================================
+# THRESHOLD
+# ==========================================
 threshold = 0.4
 
-# ketika MLFlow start awal
+# ==========================================
+# TRAINING
+# ==========================================
 with mlflow.start_run():
-    # aktifkan autolog
     mlflow.autolog()
 
-    # Latih model
-    model.fit(X_train, y_train)
+    # train pipeline
+    full_pipeline.fit(X_train, y_train)
 
-    # Hitung probabilitas model
-    y_proba = model.predict_proba(X_test)[:, 1]
+    # probabilitas
+    y_proba = full_pipeline.predict_proba(X_test)[:, 1]
 
-    # Aplikasikan threshold kepada probabilitas model
+    # thresholding
     y_pred = (y_proba >= threshold).astype(int)
 
-    # Hitung beberapa metric yang sering dipakai
+    # metrics
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
     roc_auc = roc_auc_score(y_test, y_proba)
 
-    # Logging ke MLflow
+    # logging
     mlflow.log_metric("accuracy", accuracy)
     mlflow.log_metric("precision", precision)
     mlflow.log_metric("recall", recall)
@@ -77,17 +169,22 @@ with mlflow.start_run():
     mlflow.log_metric("roc_auc", roc_auc)
     mlflow.log_param("threshold", threshold)
 
-    # Simpan model ke MLFlow DB
+    # save mlflow model
     mlflow.sklearn.log_model(
-        sk_model=model, artifact_path="model", input_example=input_example
+        sk_model=full_pipeline,
+        artifact_path="model",
+        input_example=X_train.iloc[0:5],
     )
 
-    # Simpan model agar dapat digunakan kembali
-    joblib.dump(model, MODEL_PATH)
+    # save joblib
+    joblib.dump(full_pipeline, MODEL_PATH)
 
-# Tampilkan metrics hasil ke layar
-print(f"Model disimpan di: {MODEL_PATH}")
-print(f"Accuracy : {accuracy:.4f}")
+# ==========================================
+# OUTPUT
+# ==========================================
+print("\nModel berhasil disimpan")
+print(f"Path : {MODEL_PATH}")
+print(f"\nAccuracy : {accuracy:.4f}")
 print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1 Score : {f1:.4f}")

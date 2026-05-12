@@ -14,6 +14,4 @@ SRC_DIR = BASE_DIR / "src"
 
 # path file
 API_PATH = API_DIR / "api.py"
-DATA_RAW_PATH = DATA_DIR / "raw/ecommerce_customer_churn.csv"
 MODEL_PATH = MODELS_DIR / "churn_model.pkl"
-PIPELINE_PATH = MODELS_DIR / "preprocessing_pipeline.pkl"

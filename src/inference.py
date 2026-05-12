@@ -1,52 +1,86 @@
 import joblib
 import pandas as pd
 import shap
+
 from datetime import datetime
 
-from config import MODEL_PATH, PIPELINE_PATH
+from config import MODEL_PATH
 from src.explainer import explain_churn, generate_explanation
 
-# Load model and pipeline
+# =========================
+# LOAD FULL PIPELINE
+# =========================
 model = joblib.load(MODEL_PATH)
-pipeline = joblib.load(PIPELINE_PATH)
-explainer = shap.Explainer(model)
+
+# ambil bagian preprocessing
+preprocessor = model.named_steps["preprocessor"]
+
+# ambil random forest model
+rf_model = model.named_steps["model"]
+
+# SHAP explainer
+explainer = shap.Explainer(rf_model)
 
 
-# Fungsi untuk menentukan label risiko churn
+# =========================
+# LABEL RISIKO
+# =========================
 def churn_risk_label(probability: float):
 
     if probability >= 0.8:
         return "Critical Risk"
+
     elif probability >= 0.6:
         return "High Risk"
+
     elif probability >= 0.4:
         return "Medium Risk"
+
     else:
         return "Low Risk"
 
 
-# Fungsi untuk memprediksi risiko churn
+# =========================
+# PREDIKSI CHURN
+# =========================
 def predict_churn(data: dict):
 
+    # -------------------------
+    # INPUT USER -> DATAFRAME
+    # -------------------------
     df = pd.DataFrame([data])
 
-    X = pipeline.transform(df)
+    # -------------------------
+    # PREDIKSI FULL PIPELINE
+    # -------------------------
+    prediction = model.predict(df)[0]
 
-    prediction = model.predict(X)[0]
-    probability = model.predict_proba(X)[0][1]
+    probability = model.predict_proba(df)[0][1]
 
     label = "Churn" if prediction == 1 else "Not Churn"
 
-    # ekstraksi nama fitur
-    try:
-        feature_names = pipeline.get_feature_names_out()
-    except:
-        feature_names = df.columns
+    # -------------------------
+    # PREPROCESS UNTUK SHAP
+    # -------------------------
+    X_processed = preprocessor.transform(df)
 
-    # Penjelasan dengan library SHAP
-    explanation = explain_churn(X, feature_names, explainer)
+    # jika sparse matrix
+    if hasattr(X_processed, "toarray"):
+        X_processed = X_processed.toarray()
 
-    # Kembalikan nilai dan tampilkan
+    # -------------------------
+    # FEATURE NAMES
+    # -------------------------
+    feature_names = preprocessor.get_feature_names_out()
+
+    # -------------------------
+    # SHAP EXPLANATION
+    # -------------------------
+    explanation = explain_churn(X_processed, feature_names, explainer)
+
+    # -------------------------
+    # RETURN RESULT
+    # -------------------------
     return {
         "Prediksi": int(prediction),
         "Label": label,
