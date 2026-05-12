@@ -12,7 +12,7 @@ def render_stats_widgets():
         
         total_p = len(train_df) + len(test_df)
         prediksi_c = test_df['Churn'].sum() if 'Churn' in test_df.columns else 0
-        acc = 0.892 
+        acc = 0.892 # akan disesaikan nanti
         
         # UI Widget
         col1, col2, col3 = st.columns(3)
