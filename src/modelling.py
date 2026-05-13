@@ -1,6 +1,4 @@
-# ==========================================
-# IMPORT LIBRARY
-# ==========================================
+# Import Library yang dibutuhkan
 import os
 import joblib
 import mlflow
@@ -24,40 +22,28 @@ from sklearn.metrics import (
 
 from config import DATA_DIR, MODEL_PATH
 
-# ==========================================
-# MLFLOW
-# ==========================================
+# Set MLFlow tracking dan nama eksperiment
 mlflow.set_tracking_uri("http://127.0.0.1:5000/")
 mlflow.set_experiment("Churn Prediction")
 
 
-# ==========================================
-# LOAD RAW DATA
-# ==========================================
+# Load data
 data = pd.read_csv(os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv"))
 
-print(data.head())
-
-# ==========================================
-# TARGET & FEATURE
-# ==========================================
+# Pisahkan feature dan target
 X = data.drop("Is_Churn", axis=1)
 y = data["Is_Churn"]
 
-# ==========================================
-# SPLIT DATA
-# ==========================================
+# Split data
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
     test_size=0.2,
-    stratify=y,
+    stratify=y,  # stratify menjaga distribusi kelas tetap proporsional
     random_state=42,
 )
 
-# ==========================================
-# KOLOM NUMERIK & KATEGORIK
-# ==========================================
+# Tentukan kolom numerical
 numerical_columns = [
     "Age",
     "Subscription_Duration_Months",
@@ -70,11 +56,10 @@ numerical_columns = [
     "Satisfaction_Score",
 ]
 
+# Tentukan kolom kategorikal
 categorical_columns = ["Contract_Type"]
 
-# ==========================================
-# PREPROCESSING NUMERIK
-# ==========================================
+# preprocessing kolom numerical
 numeric_transformer = Pipeline(
     steps=[
         ("imputer", SimpleImputer(strategy="median")),
@@ -82,9 +67,7 @@ numeric_transformer = Pipeline(
     ]
 )
 
-# ==========================================
-# PREPROCESSING KATEGORIK
-# ==========================================
+# preprocessing kolom kategorikal
 categorical_transformer = Pipeline(
     steps=[
         ("imputer", SimpleImputer(strategy="most_frequent")),
@@ -92,9 +75,7 @@ categorical_transformer = Pipeline(
     ]
 )
 
-# ==========================================
-# COLUMN TRANSFORMER
-# ==========================================
+# preprocessing kolom sesuai jenisnya
 preprocessor = ColumnTransformer(
     transformers=[
         (
@@ -111,9 +92,7 @@ preprocessor = ColumnTransformer(
 )
 
 
-# ==========================================
-# FULL PIPELINE
-# ==========================================
+# jadikan semua proses menjadi satu Pipeline
 full_pipeline = Pipeline(
     steps=[
         (
@@ -134,34 +113,31 @@ full_pipeline = Pipeline(
     ]
 )
 
-# ==========================================
-# THRESHOLD
-# ==========================================
+# Tentukan threshold setelah fine tuning
 threshold = 0.4
 
-# ==========================================
-# TRAINING
-# ==========================================
+# training model
 with mlflow.start_run():
+    # aktifkan autolog di mlflow
     mlflow.autolog()
 
-    # train pipeline
+    # train pipeline data latih
     full_pipeline.fit(X_train, y_train)
 
-    # probabilitas
+    # hitung probabilitas dari predict X_test
     y_proba = full_pipeline.predict_proba(X_test)[:, 1]
 
-    # thresholding
+    # masukkan threshold di prediksi
     y_pred = (y_proba >= threshold).astype(int)
 
-    # metrics
+    # tentukan metrics yang mau disimpan di mlflow
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
     roc_auc = roc_auc_score(y_test, y_proba)
 
-    # logging
+    # logging metrics ke mlflow
     mlflow.log_metric("accuracy", accuracy)
     mlflow.log_metric("precision", precision)
     mlflow.log_metric("recall", recall)
@@ -176,12 +152,10 @@ with mlflow.start_run():
         input_example=X_train.iloc[0:5],
     )
 
-    # save joblib
+    # save joblib pipeline
     joblib.dump(full_pipeline, MODEL_PATH)
 
-# ==========================================
-# OUTPUT
-# ==========================================
+# tampilkan hasil ke layar
 print("\nModel berhasil disimpan")
 print(f"Path : {MODEL_PATH}")
 print(f"\nAccuracy : {accuracy:.4f}")

@@ -1,3 +1,4 @@
+# load library
 import joblib
 import pandas as pd
 import shap
@@ -12,9 +13,7 @@ except ImportError:
 from config import MODEL_PATH
 from src.explainer import explain_churn, generate_explanation
 
-# =========================
-# LOAD FULL PIPELINE
-# =========================
+# load full pipeline
 model = joblib.load(MODEL_PATH)
 preprocessor = model.named_steps["preprocessor"]
 rf_model = model.named_steps["model"]
@@ -25,9 +24,7 @@ else:
     explainer = None
 
 
-# =========================
-# LABEL RISIKO
-# =========================
+# berikan label probabilitas churn
 def churn_risk_label(probability: float):
 
     if probability >= 0.8:
@@ -43,47 +40,33 @@ def churn_risk_label(probability: float):
         return "Low Risk"
 
 
-# =========================
-# PREDIKSI CHURN
-# =========================
+# prediksi churn
 def predict_churn(data: dict):
 
-    # -------------------------
-    # INPUT USER -> DATAFRAME
-    # -------------------------
+    # konversikan data input user ke dataframe
     df = pd.DataFrame([data])
 
-    # -------------------------
-    # PREDIKSI FULL PIPELINE
-    # -------------------------
+    # prediksi fullpipeline
     prediction = model.predict(df)[0]
 
     probability = model.predict_proba(df)[0][1]
 
     label = "Churn" if prediction == 1 else "Not Churn"
 
-    # -------------------------
-    # PREPROCESS UNTUK SHAP
-    # -------------------------
+    # preprocess SHAP
     X_processed = preprocessor.transform(df)
 
     # jika sparse matrix
     if hasattr(X_processed, "toarray"):
         X_processed = X_processed.toarray()
 
-    # -------------------------
-    # FEATURE NAMES
-    # -------------------------
+    # ekstract nama fitur
     feature_names = preprocessor.get_feature_names_out()
 
-    # -------------------------
-    # SHAP EXPLANATION
-    # -------------------------
+    # panggil fungsi explain_churn
     explanation = explain_churn(X_processed, feature_names, explainer)
 
-    # -------------------------
-    # RETURN RESULT
-    # -------------------------
+    # kembalikan hasil
     return {
         "Prediksi": int(prediction),
         "Label": label,
