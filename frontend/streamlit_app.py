@@ -24,15 +24,13 @@ st.set_page_config(
 )
 
 menu = render_navbar()
-
+st.info("Pilih menu **Prediksi Churn** di navigasi atas untuk memulai analisis.")
 if menu == "Dashboard":
     st.markdown(
         "### <img src='https://cdn-icons-png.flaticon.com/128/1041/1041888.png' width='40'> Dashboard Analisis",
         unsafe_allow_html=True,
     )
     render_stats_widgets()
-
-    st.info("Pilih menu **Prediksi Churn** di navigasi atas untuk memulai analisis.")
 
 elif menu == "Prediksi Churn":
     st.markdown(
@@ -187,6 +185,10 @@ elif menu == "Prediksi Churn":
                     st.subheader("🔍 Analisis Faktor Penyebab")
                     shap_values = hasil.get("Penjelasan SHAP", {})
                     if shap_values:
+                        df_plot = pd.DataFrame(shap_values)
+                        fig = px.bar(df_plot, x='Nilai SHAP', y='Faktor', orientation='h',
+                                     color='Kategori', color_discrete_map={'risk': 'red', 'protective': 'green'})
+                        st.plotly_chart(fig, use_container_width=True)
                         for item in shap_values:
                             if item["Kategori"] == "risk":
                                 st.warning(f"⚠️ **{item['Faktor']}**")
