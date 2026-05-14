@@ -76,7 +76,7 @@ def render_stats_widgets():
             fig_bar.update_layout(
                 xaxis_title="Skor Kepuasan", yaxis_title="Jumlah Pelanggan"
             )
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, width=True)
 
     except Exception as e:
         st.error(f"Gagal memuat data statistik: {e}")
