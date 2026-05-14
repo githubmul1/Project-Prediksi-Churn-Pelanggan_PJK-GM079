@@ -17,7 +17,7 @@ def render_stats_widgets():
     root_dir = os.path.join(current_dir, "..", "..")
     try:
         # Ambil data dari folder data/processed 
-        path = os.path.join(DATA_DIR, "raw", "ecommerce_customer_churn_data.csv")
+        path = os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv")
         data = pd.read_csv(path)
 
         train_df, test_df = train_test_split(
@@ -36,7 +36,7 @@ def render_stats_widgets():
         # UI Widget
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Total Dataset", f"{total_p:,}", help="Data dari folder raw")
+            st.metric("Total Dataset", f"{total_p:,}", help="Data dari folder data")
         with col2:
             st.metric("Potensi Churn", f"{prediksi_c}", delta=f"Ditemukan di {len(test_df)} Data Test")
         with col3:
