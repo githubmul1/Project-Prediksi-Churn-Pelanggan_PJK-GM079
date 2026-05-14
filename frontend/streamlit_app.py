@@ -108,7 +108,7 @@ elif menu == "Prediksi Churn":
             )
             contract_type = st.selectbox(
                 "Jenis Kontrak",
-                ["Monthly", "Quarterly", "Annual"],
+                ["Monthly", "Annual"],
                 index=None,
                 placeholder="Pilih jenis kontrak",
             )
@@ -186,9 +186,7 @@ elif menu == "Prediksi Churn":
                     shap_values = hasil.get("Penjelasan SHAP", {})
                     if shap_values:
                         df_plot = pd.DataFrame(shap_values)
-                        fig = px.bar(df_plot, x='Nilai SHAP', y='Faktor', orientation='h',
-                                     color='Kategori', color_discrete_map={'risk': 'red', 'protective': 'green'})
-                        st.plotly_chart(fig, use_container_width=True)
+                        
                         for item in shap_values:
                             if item["Kategori"] == "risk":
                                 st.warning(f"⚠️ **{item['Faktor']}**")
