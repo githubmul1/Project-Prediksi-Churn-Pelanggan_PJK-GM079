@@ -185,10 +185,10 @@ elif menu == "Prediksi Churn":
 
                 with res_col2:
                     st.subheader("🔍 Analisis Faktor Penyebab")
-                    shap_values = hasil.get("SHAP Values", {})
+                    shap_values = hasil.get("Penjelasan SHAP", {})
                     if shap_values:
                         for item in shap_values:
-                            if item["Kategory"] == "risk":
+                            if item["Kategori"] == "risk":
                                 st.warning(f"⚠️ **{item['Faktor']}**")
                                 st.markdown(f"**Dampak:** {item['Pengaruh']}")
                                 st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")

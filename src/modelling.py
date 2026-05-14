@@ -28,7 +28,7 @@ mlflow.set_experiment("Churn Prediction")
 
 
 # Load data
-data = pd.read_csv(os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv"))
+data = pd.read_csv(os.path.join(DATA_DIR, "raw", "ecommerce_customer_churn_data.csv"))
 
 # Pisahkan feature dan target
 X = data.drop("Is_Churn", axis=1)
