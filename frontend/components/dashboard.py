@@ -37,7 +37,7 @@ def render_stats_widgets():
         # UI Widget
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Total Dataset", f"{total_p:,}", help="Data dari folder raw")
+            st.metric("Total Dataset", f"{total_p:,}", help="Data dari folder data")
         with col2:
             st.metric(
                 "Potensi Churn",
