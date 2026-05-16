@@ -11,7 +11,7 @@ def render_footer():
         
     with col2:
         st.markdown("**Navigasi Cepat**")
-        st.caption("• Dashboard\n• Form Prediksi\n• Dokumentasi API")
+        st.caption("• Dashboard\n• Form Prediksi\n• Tentang Aplikasi")
         
     with col3:
         st.markdown("**Tim PJK-GM079**")
