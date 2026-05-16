@@ -9,11 +9,11 @@ project_root = os.path.abspath(os.path.join(current_dir, "../"))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from frontend import prediction
-from frontend.components import about
+from frontend.views import prediction
+from frontend.views import about
 from components.navbar import render_navbar
 from components.footer import render_footer
-from components.dashboard import render_stats_widgets
+from frontend.views.dashboard import render_stats_widgets
 
 # Konfigurasi Halaman
 st.set_page_config(

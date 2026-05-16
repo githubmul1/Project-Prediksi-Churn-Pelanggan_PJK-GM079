@@ -17,7 +17,7 @@ def render_stats_widgets():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.join(current_dir, "..", "..")
     try:
-        # Ambil data dari folder data/processed
+        # Ambil data dari folder data
         path = os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv")
         data = pd.read_csv(path)
 
@@ -52,17 +52,15 @@ def render_stats_widgets():
         st.markdown("---")
 
         # Visualisasi dalam bentuk grafik / Bar Chart
-        chart_col1 = st.columns(1)[0]
-
-        with chart_col1:
-            data["Satisfaction_Score"] = data["Satisfaction_Score"].astype(str)
-            df_score = (
+        st.subheader("Analisis Skor Kepuasan Pelanggan")
+        data["Satisfaction_Score"] = data["Satisfaction_Score"].astype(str)
+        df_score = (
                 data.groupby(["Satisfaction_Score", "Is_Churn"])
                 .size()
                 .reset_index(name="Jumlah")
             )
 
-            fig_bar = px.bar(
+        fig_bar = px.bar(
                 df_score,
                 x="Satisfaction_Score",
                 y="Jumlah",
@@ -73,10 +71,10 @@ def render_stats_widgets():
                 },  # Mengunci urutan skor
                 color_discrete_map={1: "#EF4444", 0: "#10B981"},
             )
-            fig_bar.update_layout(
+        fig_bar.update_layout(
                 xaxis_title="Skor Kepuasan", yaxis_title="Jumlah Pelanggan"
             )
-            st.plotly_chart(fig_bar, width=True)
+        st.plotly_chart(fig_bar, use_container_width=True)
 
     except Exception as e:
         st.error(f"Gagal memuat data statistik: {e}")
