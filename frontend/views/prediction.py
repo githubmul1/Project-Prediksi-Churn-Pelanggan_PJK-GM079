@@ -34,11 +34,11 @@ def render_prediction():
         with col1:
             st.markdown("### 📝 Input Data Pelanggan")
             age = st.number_input(
-                "Umur", 
+                "Usia", 
                 18, 
                 100, 
                 value=None, 
-                placeholder="Masukkan umur pelanggan"
+                placeholder="Masukkan usia pelanggan"
             )
             sub_months = st.number_input(
                 "Lama Berlangganan (Bulan)", 
@@ -48,7 +48,7 @@ def render_prediction():
                 placeholder="Masukkan lama berlangganan"
             )
             monthly_logins = st.number_input(
-                "Rata-rata Login Bulanan", 
+                "Frekuensi Login Bulanan", 
                 0, 
                 50, 
                 value=None, 
@@ -59,7 +59,7 @@ def render_prediction():
                 0, 
                 365, 
                 value=None, 
-                placeholder="Masukkan hari sejak pembelian terakhir"
+                placeholder="Masukkan transaksi pembelian terakhir"
             )
             usage_time = st.number_input(
                 "Waktu Penggunaan App (Menit)", 
@@ -83,11 +83,11 @@ def render_prediction():
                 placeholder="Masukkan persentase diskon yang digunakan"
             )
             support_calls = st.number_input(
-                "Jumlah Panggilan Dukungan", 
+                "Jumlah Panggilan Komplain", 
                 0, 
                 20, 
                 value=None, 
-                placeholder="Masukkan jumlah panggilan dukungan"
+                placeholder="Masukkan jumlah panggilan komplain ke customer service"
             )
             satisfaction = st.slider(
                 "Skor Kepuasan (1-5)", 
@@ -116,9 +116,16 @@ def render_prediction():
             
             if submit_button:
                 required_fields = [
-                    age, sub_months, monthly_logins, last_purchase,
-                    usage_time, monthly_spend, discount_pct, support_calls,
-                    satisfaction, contract_type
+                    age,
+                    sub_months,
+                    monthly_logins,
+                    last_purchase,
+                    usage_time,
+                    monthly_spend,
+                    discount_pct,
+                    support_calls,
+                    satisfaction,
+                    contract_type
                 ]
                 if any(v is None for v in required_fields):
                     st.warning("⚠️ Harap isi semua kolom yang diperlukan.")
