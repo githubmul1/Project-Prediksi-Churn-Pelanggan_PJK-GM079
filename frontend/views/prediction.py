@@ -19,7 +19,7 @@ def render_prediction():
         unsafe_allow_html=True,
     )
     st.markdown(
-        '## <i class="fa-solid fa-microchip"></i> Analisis Risiko Churn',
+        '## <i class="fas fa-solid fa-microchip"></i> Analisis Risiko Churn',
         unsafe_allow_html=True,
     )
     st.markdown(
@@ -32,70 +32,79 @@ def render_prediction():
         col1, col2 = st.columns([1.2, 1])
 
         with col1:
+            st.markdown("### 📝 Input Data Pelanggan")
             age = st.number_input(
-                "Umur", 18, 100, value=None, placeholder="Masukkan umur pelanggan"
+                "Umur", 
+                18, 
+                100, 
+                value=None, 
+                placeholder="Masukkan umur pelanggan"
             )
             sub_months = st.number_input(
-                "Lama Berlangganan (Bulan)",
-                1,
-                72,
-                value=None,
-                placeholder="Masukkan lama berlangganan",
+                "Lama Berlangganan (Bulan)", 
+                1, 
+                72, 
+                value=None, 
+                placeholder="Masukkan lama berlangganan"
             )
             monthly_logins = st.number_input(
-                "Rata-rata Login Bulanan",
-                0,
-                50,
-                value=None,
-                placeholder="Masukkan rata-rata login bulanan",
+                "Rata-rata Login Bulanan", 
+                0, 
+                50, 
+                value=None, 
+                placeholder="Masukkan rata-rata login bulanan"
             )
             last_purchase = st.number_input(
-                "Hari Sejak Pembelian Terakhir",
-                0,
-                365,
-                value=None,
-                placeholder="Masukkan hari sejak pembelian terakhir",
+                "Hari Sejak Pembelian Terakhir", 
+                0, 
+                365, 
+                value=None, 
+                placeholder="Masukkan hari sejak pembelian terakhir"
             )
             usage_time = st.number_input(
-                "Waktu Penggunaan App (Menit)",
-                0,
-                5000,
-                value=None,
-                placeholder="Masukkan waktu penggunaan app",
+                "Waktu Penggunaan App (Menit)", 
+                0, 
+                5000, 
+                value=None, 
+                placeholder="Masukkan waktu penggunaan app"
             )
             monthly_spend = st.number_input(
-                "Pengeluaran Bulanan (USD)",
-                0,
-                1000,
-                value=None,
-                placeholder="Masukkan pengeluaran bulanan",
+                "Pengeluaran Bulanan (USD)", 
+                0, 
+                1000, 
+                value=None, 
+                placeholder="Masukkan pengeluaran bulanan"
             )
             discount_pct = st.number_input(
-                "Persentase Diskon yang Digunakan",
-                0,
-                100,
-                value=None,
-                placeholder="Masukkan persentase diskon yang digunakan",
+                "Persentase Diskon yang Digunakan", 
+                0, 
+                100, 
+                value=None, 
+                placeholder="Masukkan persentase diskon yang digunakan"
             )
             support_calls = st.number_input(
-                "Jumlah Panggilan Dukungan",
-                0,
-                20,
-                value=None,
-                placeholder="Masukkan jumlah panggilan dukungan",
+                "Jumlah Panggilan Dukungan", 
+                0, 
+                20, 
+                value=None, 
+                placeholder="Masukkan jumlah panggilan dukungan"
             )
             satisfaction = st.slider(
-                "Skor Kepuasan (1-5)", 1, 5, value=1, help="Pilih Tingkat kepuasan"
+                "Skor Kepuasan (1-5)", 
+                1, 
+                5, 
+                value=1, 
+                help="Pilih Tingkat kepuasan"
             )
             contract_type = st.selectbox(
-                "Jenis Kontrak",
-                ["Monthly", "Annual"],
-                index=None,
-                placeholder="Pilih jenis kontrak",
+                "Jenis Kontrak", 
+                ["Bulanan", "Tahunan"], 
+                index=None, 
+                placeholder="Pilih jenis kontrak"
             )
 
-        # Tombol untuk submit form
-        submit_button = st.form_submit_button("Analisis Sekarang")
+            # Tombol submit button untuk menjalankan prediksi
+            submit_button = st.form_submit_button("Analisis Sekarang")
         
         with col2:
             st.markdown("### 📌 Petunjuk Pengisian")
@@ -104,82 +113,72 @@ def render_prediction():
             - Gunakan data aktual pelanggan untuk analisis yang lebih relevan.
             - Setelah menekan tombol, tunggu beberapa saat untuk melihat hasil prediksi dan analisis faktor penyebabnya.
             """)
-        # Logika menampilkan hasil hanya setelah tombol submit ditekan
-        if submit_button:
-            required_fields = [
-                age,
-                sub_months,
-                monthly_logins,
-                last_purchase,
-                usage_time,
-                monthly_spend,
-                discount_pct,
-                support_calls,
-                satisfaction,
-                contract_type,
-            ]
-            if any(v is None for v in required_fields):
-                st.warning("⚠️ Harap isi semua kolom yang diperlukan.")
-
-            else:
-                input_data = {
-                    "Age": age,
-                    "Subscription_Duration_Months": sub_months,
-                    "Monthly_Logins": monthly_logins,
-                    "Last_Purchase_Days_Ago": last_purchase,
-                    "App_Usage_Time_Min": usage_time,
-                    "Monthly_Spend": monthly_spend,
-                    "Discount_Usage_Percentage": discount_pct,
-                    "Customer_Support_Calls": support_calls,
-                    "Satisfaction_Score": satisfaction,
-                    "Contract_Type": contract_type,
-                }
-
-            try:
-                with st.spinner("🤖 AI sedang menganalisis perilaku pelanggan..."):
-                    hasil = predict_churn(input_data)
-
-                st.write("---")
-                st.subheader("📊 Hasil Analisis Prediksi")
-
-                res_col1, res_col2 = st.columns([1, 2])
-
-                with res_col1:
-                    if hasil["Prediksi"] == 1:
-                        st.error(f"### {hasil['Label']}")
-                    else:
-                        st.success(f"### {hasil['Label']}")
-
-                    st.metric(
-                        "Probabilitas Churn", f"{hasil['Probabilitas Churn']:.1%}"
-                    )
-
-                    risk_colors = {
-                        "Critical Risk": "🔴",
-                        "High Risk": "🟠",
-                        "Medium Risk": "🟡",
-                        "Low Risk": "🟢",
+            
+            if submit_button:
+                required_fields = [
+                    age, sub_months, monthly_logins, last_purchase,
+                    usage_time, monthly_spend, discount_pct, support_calls,
+                    satisfaction, contract_type
+                ]
+                if any(v is None for v in required_fields):
+                    st.warning("⚠️ Harap isi semua kolom yang diperlukan.")
+                else:
+                    input_data = {
+                        "Age": age,
+                        "Subscription_Duration_Months": sub_months,
+                        "Monthly_Logins": monthly_logins,
+                        "Last_Purchase_Days_Ago": last_purchase,
+                        "App_Usage_Time_Min": usage_time,
+                        "Monthly_Spend": monthly_spend,
+                        "Discount_Usage_Percentage": discount_pct,
+                        "Customer_Support_Calls": support_calls,
+                        "Satisfaction_Score": satisfaction,
+                        "Contract_Type": contract_type,
                     }
-                    icon = risk_colors.get(hasil["Level Risiko"], "⚪")
-                    st.markdown(f"**Level Risiko:** {icon} {hasil['Level Risiko']}")
 
-                with res_col2:
-                    st.subheader("🔍 Analisis Faktor Penyebab")
-                    shap_values = hasil.get("Penjelasan SHAP", {})
-                    if shap_values:
-                        df_plot = pd.DataFrame(shap_values)
+                    try:
+                        with st.spinner("🤖 AI sedang menganalisis perilaku pelanggan..."):
+                            hasil = predict_churn(input_data)
+
+                        st.markdown("---")
+                        st.subheader("📊 Hasil Analisis Prediksi")
+
+                        if hasil["Prediksi"] == 1:
+                            st.error(f"### {hasil['Label']}")
+                        else:
+                            st.success(f"### {hasil['Label']}")
+
+                        st.metric("Probabilitas Churn", f"{hasil['Probabilitas Churn']:.1%}")
+
+                        risk_colors = {
+                            "Critical Risk": "🔴",
+                            "High Risk": "🟠",
+                            "Medium Risk": "🟡",
+                            "Low Risk": "🟢",
+                        }
+                        icon = risk_colors.get(hasil["Level Risiko"], "⚪")
+                        st.markdown(f"**Level Risiko:** {icon} {hasil['Level Risiko']}")
+
+                        # Analisis Faktor Penyebab
+                        st.markdown("---")
+                        st.subheader("🔍 Analisis Faktor Penyebab")
                         
-                        for item in shap_values:
-                            if item["Kategori"] == "risk":
-                                st.warning(f"⚠️ **{item['Faktor']}**")
-                                st.markdown(f"**Dampak:** {item['Pengaruh']}")
-                                st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")
-                            else:
-                                st.success(f"✅ **{item['Faktor']}**")
-                                st.markdown(f"**Dampak:** {item['Pengaruh']}")
-                                st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")
-                    else:
-                        st.info("Tidak ada faktor tambahan yang dapat ditampilkan.")
+                        # Penjelasan SHAP
+                        shap_values = hasil.get("Penjelasan SHAP", []) 
+                        if shap_values:
+                            df_plot = pd.DataFrame(shap_values)
+                            
+                            for item in shap_values:
+                                if item["Kategori"] == "risk":
+                                    st.warning(f"⚠️ **{item['Faktor']}**")
+                                    st.markdown(f"**Dampak:** {item['Pengaruh']}")
+                                    st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")
+                                else:
+                                    st.success(f"✅ **{item['Faktor']}**")
+                                    st.markdown(f"**Dampak:** {item['Pengaruh']}")
+                                    st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")
+                        else:
+                            st.info("Tidak ada faktor tambahan yang dapat ditampilkan.")
 
-            except Exception as e:
-                st.error(f"Terjadi kesalahan saat memproses prediksi: {e}")
+                    except Exception as e:
+                        st.error(f"Terjadi kesalahan saat memproses prediksi: {e}")
