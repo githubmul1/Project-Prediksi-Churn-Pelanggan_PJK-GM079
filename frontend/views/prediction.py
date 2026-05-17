@@ -22,6 +22,14 @@ def render_prediction():
         '## <i class="fas fa-solid fa-microchip"></i> Analisis Risiko Churn',
         unsafe_allow_html=True,
     )
+
+    st.markdown("### 📌 Petunjuk Pengisian")
+    st.write("""
+        - Pastikan semua kolom diisi dengan benar untuk mendapatkan hasil yang akurat.
+        - Gunakan data aktual pelanggan untuk analisis yang lebih relevan.
+        - Setelah menekan tombol, tunggu beberapa saat untuk melihat hasil prediksi dan analisis faktor penyebabnya.
+    """)
+    
     st.markdown(
         "Masukkan data pelanggan di bawah ini untuk mendapatkan prediksi instan."
     )
@@ -107,13 +115,7 @@ def render_prediction():
             submit_button = st.form_submit_button("Analisis Sekarang")
         
         with col2:
-            st.markdown("### 📌 Petunjuk Pengisian")
-            st.write("""
-            - Pastikan semua kolom diisi dengan benar untuk mendapatkan hasil yang akurat.
-            - Gunakan data aktual pelanggan untuk analisis yang lebih relevan.
-            - Setelah menekan tombol, tunggu beberapa saat untuk melihat hasil prediksi dan analisis faktor penyebabnya.
-            """)
-            
+              
             if submit_button:
                 required_fields = [
                     age,
