@@ -106,7 +106,7 @@ def render_prediction():
             )
             contract_type = st.selectbox(
                 "Jenis Kontrak", 
-                ["Bulanan", "Tahunan"], 
+                ["Monthly", "Annual"], 
                 index=None, 
                 placeholder="Pilih jenis kontrak"
             )
@@ -115,6 +115,7 @@ def render_prediction():
             submit_button = st.form_submit_button("Analisis Sekarang")
         
         with col2:
+            st.subheader("📊 Hasil Analisis Prediksi")
               
             if submit_button:
                 required_fields = [
@@ -148,9 +149,6 @@ def render_prediction():
                     try:
                         with st.spinner("🤖 AI sedang menganalisis perilaku pelanggan..."):
                             hasil = predict_churn(input_data)
-
-                        st.markdown("---")
-                        st.subheader("📊 Hasil Analisis Prediksi")
 
                         if hasil["Prediksi"] == 1:
                             st.error(f"### {hasil['Label']}")
