@@ -15,4 +15,4 @@ SRC_DIR = BASE_DIR / "src"
 # path file
 API_PATH = API_DIR / "api.py"
 MODEL_PATH = MODELS_DIR / "churn_model.pkl"
-DB_PATH = DB_DIR / "output.db"
+DB_PATH = str(DB_DIR / "output.db")
