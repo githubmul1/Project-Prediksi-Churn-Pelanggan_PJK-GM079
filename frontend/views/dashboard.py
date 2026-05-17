@@ -1,80 +1,136 @@
 import streamlit as st
 import pandas as pd
-import os
-import joblib
 import plotly.express as px
-import plotly.graph_objects as go
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from config import DATA_DIR, MODEL_PATH
+
+from database.connect_db import get_connection
 
 
 def render_stats_widgets():
-    total_p = 0
-    prediksi_c = 0
-    acc = 0.0
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.join(current_dir, "..", "..")
-    try:
-        # Ambil data dari folder data
-        path = os.path.join(DATA_DIR, "ecommerce_customer_churn_data.csv")
-        data = pd.read_csv(path)
+    conn = get_connection()
 
-        train_df, test_df = train_test_split(
-            data, test_size=0.2, random_state=42, stratify=data["Is_Churn"]
-        )
+    query = """
+    SELECT *
+    FROM predictions
+    ORDER BY id DESC
+    """
 
-        model = joblib.load(MODEL_PATH)
-        y_test = test_df["Is_Churn"]
-        X_test = test_df.drop("Is_Churn", axis=1)
-        y_pred = model.predict(X_test)
+    df = pd.read_sql(query, conn)
 
-        total_p = len(data)
-        prediksi_c = test_df["Is_Churn"].sum()
-        acc = accuracy_score(y_test, y_pred)
+    conn.close()
 
-        # UI Widget
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Total Dataset", f"{total_p:,}", help="Data dari folder data")
-        with col2:
-            st.metric(
-                "Potensi Churn",
-                f"{prediksi_c}",
-                delta=f"Ditemukan di {len(test_df)} Data Test",
-            )
-        with col3:
-            st.metric(
-                "Akurasi Model", f"{acc:.1%}", help="Performa Model Random Forest"
-            )
+    # bila database masih kosong
+    if df.empty:
+        st.warning("Belum ada data prediksi.")
+        return
 
-        st.markdown("---")
+    # konversi datetime
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
 
-        # Visualisasi dalam bentuk grafik / Bar Chart
-        st.subheader("Analisis Skor Kepuasan Pelanggan")
-        data["Satisfaction_Score"] = data["Satisfaction_Score"].astype(str)
-        df_score = (
-                data.groupby(["Satisfaction_Score", "Is_Churn"])
-                .size()
-                .reset_index(name="Jumlah")
-            )
+    df["date"] = df["timestamp"].dt.date
 
-        fig_bar = px.bar(
-                df_score,
-                x="Satisfaction_Score",
-                y="Jumlah",
-                color="Is_Churn",
-                barmode="group",
-                category_orders={
-                    "Satisfaction_Score": ["1", "2", "3", "4", "5"]
-                },  # Mengunci urutan skor
-                color_discrete_map={1: "#EF4444", 0: "#10B981"},
-            )
-        fig_bar.update_layout(
-                xaxis_title="Skor Kepuasan", yaxis_title="Jumlah Pelanggan"
-            )
-        st.plotly_chart(fig_bar, use_container_width=True)
+    # semua data terseleksi
+    filtered_df = df.copy()
 
-    except Exception as e:
-        st.error(f"Gagal memuat data statistik: {e}")
+    # buat metrik
+    total_predictions = len(filtered_df)  # total prediksi yang sudah dilakukan
+
+    churn_rate = filtered_df["prediction"].mean()  # tingkat churn
+
+    avg_probability = filtered_df[
+        "churn_probability"
+    ].mean()  # rata-rata probabilitas churn
+
+    high_risk_count = len(
+        filtered_df[filtered_df["risk_level"].isin(["Critical Risk", "High Risk"])]
+    )  # jumlah pelanggan risiko tinggi
+
+    col1, col2, col3, col4 = st.columns(4)  # bagi dalam 4 kolom
+
+    with col1:  # kolom 1 total prediksi
+        with st.container(border=True):
+            st.metric("Total Prediksi", total_predictions)
+
+    with col2:  # kolom 2 churn rate
+        with st.container(border=True):
+            st.metric("Churn Rate", f"{churn_rate:.1%}")
+
+    with col3:  # kolom 3 rata-rata kemungkinan churn
+        with st.container(border=True):
+            st.metric("Avg Churn Probability", f"{avg_probability:.1%}")
+
+    with col4:  # kolom 4 jumlah pengguna dengan risiko churn tinggi
+        with st.container(border=True):
+            st.metric("High Risk Customer", high_risk_count)
+
+    st.markdown("---")  # buat garis
+
+    # buat 3 kolom berikutnya
+    col1, col2, col3 = st.columns(3)
+
+    # tren harian
+    with col1:
+
+        st.subheader("📈 Tren Prediksi")
+
+        trend_df = filtered_df.copy()
+
+        trend_df["date"] = trend_df["timestamp"].dt.strftime("%d-%m-%Y")
+
+        trend_group = trend_df.groupby("date").size().reset_index(name="total")
+
+        fig_trend = px.line(trend_group, x="date", y="total", markers=True)
+
+        st.plotly_chart(fig_trend, use_container_width=True)
+
+    # kolom 2 pie cart pengguna risiko tinggi
+    with col2:
+
+        st.subheader("⚠️ Risk Level")
+
+        risk_group = filtered_df["risk_level"].value_counts().reset_index()
+
+        risk_group.columns = ["risk_level", "count"]
+
+        fig_risk = px.pie(risk_group, names="risk_level", values="count", hole=0.4)
+
+        st.plotly_chart(fig_risk, use_container_width=True)
+
+    # kolom 3 jenis kontrak
+    with col3:
+
+        st.subheader("📑 Jenis Kontrak")
+
+        contract_group = filtered_df["contract_type"].value_counts().reset_index()
+
+        contract_group.columns = ["contract_type", "count"]
+
+        fig_contract = px.bar(contract_group, x="contract_type", y="count")
+
+        st.plotly_chart(fig_contract, use_container_width=True)
+
+    # table 1 pengguna dengan risiko tinggi
+    st.subheader("🚨 Pelanggan Risiko Tinggi")
+
+    high_risk_df = filtered_df[
+        filtered_df["risk_level"].isin(["Critical Risk", "High Risk"])
+    ]
+
+    st.dataframe(high_risk_df, use_container_width=True)
+
+    # table inferensi
+    st.subheader("📋 Seluruh Riwayat Prediksi")
+
+    st.dataframe(filtered_df, use_container_width=True)
+
+    # ekspor ke CSV
+    st.subheader("⬇️ Export Data")
+
+    csv = filtered_df.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        label="Download CSV",
+        data=csv,
+        file_name="churn_predictions.csv",
+        mime="text/csv",
+    )

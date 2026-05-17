@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import os
 
 import sys
@@ -14,6 +13,9 @@ from frontend.views import about
 from components.navbar import render_navbar
 from components.footer import render_footer
 from frontend.views.dashboard import render_stats_widgets
+from database.init_db import init_db
+
+init_db()
 
 # Konfigurasi Halaman
 st.set_page_config(
@@ -25,11 +27,7 @@ st.set_page_config(
 
 menu = render_navbar()
 if menu == "Dashboard":
-    st.markdown(
-        "### <img src='https://cdn-icons-png.flaticon.com/128/1041/1041888.png' width='40'> Dashboard Analisis",
-        unsafe_allow_html=True,
-    )
-    st.info("Pilih menu **Prediksi Churn** di navigasi atas untuk memulai analisis.")
+
     render_stats_widgets()
 
 elif menu == "Prediksi Churn":
