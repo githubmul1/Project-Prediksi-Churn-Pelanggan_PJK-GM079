@@ -92,7 +92,7 @@ def render_prediction():
             )
             contract_type = st.selectbox(
                 "Jenis Kontrak",
-                ["Bulanan", "Tahunan"],
+                ["Monthly", "Annual"],
                 index=None,
                 placeholder="Pilih jenis kontrak",
             )
