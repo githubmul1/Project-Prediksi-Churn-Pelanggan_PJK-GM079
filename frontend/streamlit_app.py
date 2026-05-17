@@ -10,8 +10,8 @@ if project_root not in sys.path:
 
 from frontend.views import prediction
 from frontend.views import about
-from components.navbar import render_navbar
-from components.footer import render_footer
+from frontend.components.navbar import render_navbar
+from frontend.components.footer import render_footer
 from frontend.views.dashboard import render_stats_widgets
 from database.init_db import init_db
 
