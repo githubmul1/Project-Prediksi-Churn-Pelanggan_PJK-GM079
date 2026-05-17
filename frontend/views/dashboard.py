@@ -90,9 +90,9 @@ def render_stats_widgets():
 
         risk_group = filtered_df["risk_level"].value_counts().reset_index()
 
-        risk_group.columns = ["risk_level", "count"]
+        risk_group.columns = ["risk level", "count"]
 
-        fig_risk = px.pie(risk_group, names="risk_level", values="count", hole=0.4)
+        fig_risk = px.pie(risk_group, names="risk level", values="count", hole=0.4)
 
         st.plotly_chart(fig_risk, use_container_width=True)
 
@@ -103,9 +103,9 @@ def render_stats_widgets():
 
         contract_group = filtered_df["contract_type"].value_counts().reset_index()
 
-        contract_group.columns = ["contract_type", "count"]
+        contract_group.columns = ["contract type", "count"]
 
-        fig_contract = px.bar(contract_group, x="contract_type", y="count")
+        fig_contract = px.bar(contract_group, x="contract type", y="count")
 
         st.plotly_chart(fig_contract, use_container_width=True)
 
