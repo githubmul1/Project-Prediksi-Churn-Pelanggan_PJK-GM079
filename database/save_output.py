@@ -24,10 +24,11 @@ def save_prediction(name, input_data, hasil):
         satisfaction_score,
         contract_type,
         prediction,
+        label,
         churn_probability,
         risk_level
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
         (
             datetime.now().isoformat(),
@@ -43,6 +44,7 @@ def save_prediction(name, input_data, hasil):
             input_data["Satisfaction_Score"],
             input_data["Contract_Type"],
             hasil["Prediksi"],
+            hasil["Label"],
             hasil["Probabilitas Churn"],
             hasil["Level Risiko"],
         ),
