@@ -136,8 +136,11 @@ def render_prediction():
                     satisfaction,
                     contract_type
                 ]
+                # Validasi input
                 if any(v is None for v in required_fields):
                     st.warning("⚠️ Harap isi semua kolom yang diperlukan.")
+                elif not customer_name.replace(" ", "").isalpha():
+                    st.warning("⚠️ Nama pelanggan harus berupa huruf.")
                 else:
                     input_data = {
                         "Age": age,
