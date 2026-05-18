@@ -1,7 +1,6 @@
 import os
 import sys
 import pandas as pd
-import joblib
 import streamlit as st
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -10,17 +9,12 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from database.save_output import save_prediction
-from components.navbar import render_navbar
-from components.footer import render_footer
 from src.inference import predict_churn
+
 
 def render_prediction():
     st.markdown(
         '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '## <i class="fas fa-solid fa-microchip"></i> Analisis Risiko Churn',
         unsafe_allow_html=True,
     )
 
@@ -30,98 +24,100 @@ def render_prediction():
         - Gunakan data aktual pelanggan untuk analisis yang lebih relevan.
         - Setelah menekan tombol, tunggu beberapa saat untuk melihat hasil prediksi dan analisis faktor penyebabnya.
     """)
-    
+
     st.markdown(
         "Masukkan data pelanggan di bawah ini untuk mendapatkan prediksi instan."
     )
 
     # Bungkus form untuk input data pelanggan
     with st.form("form_prediksi"):
-        col1, col2 = st.columns([1.2, 1])
+        col1, space, col2 = st.columns([1, 0.05, 1])
 
         with col1:
             st.markdown("### 📝 Input Data Pelanggan")
             customer_name = st.text_input(
-                "Nama Pelanggan", 
-                value="", 
-                placeholder="Masukkan nama pelanggan"
+                "Nama Pelanggan", value="", placeholder="Masukkan nama pelanggan"
             )
             age = st.number_input(
-                "Usia", 
-                18, 
-                100, 
-                value=None, 
-                placeholder="Masukkan usia pelanggan"
+                "Usia", 18, 100, value=None, placeholder="Masukkan usia pelanggan"
             )
             sub_months = st.number_input(
-                "Lama Berlangganan (Bulan)", 
-                1, 
-                72, 
-                value=None, 
-                placeholder="Masukkan lama berlangganan"
+                "Lama Berlangganan (Bulan)",
+                1,
+                72,
+                value=None,
+                placeholder="Masukkan lama berlangganan",
             )
             monthly_logins = st.number_input(
-                "Frekuensi Login Bulanan", 
-                0, 
-                50, 
-                value=None, 
-                placeholder="Masukkan rata-rata login bulanan"
+                "Frekuensi Login Bulanan",
+                0,
+                50,
+                value=None,
+                placeholder="Masukkan rata-rata login bulanan",
             )
             last_purchase = st.number_input(
-                "Hari Sejak Pembelian Terakhir", 
-                0, 
-                365, 
-                value=None, 
-                placeholder="Masukkan transaksi pembelian terakhir"
+                "Hari Sejak Pembelian Terakhir",
+                0,
+                365,
+                value=None,
+                placeholder="Masukkan transaksi pembelian terakhir",
             )
             usage_time = st.number_input(
-                "Waktu Penggunaan App (Menit)", 
-                0, 
-                5000, 
-                value=None, 
-                placeholder="Masukkan waktu penggunaan app"
+                "Waktu Penggunaan App (Menit)",
+                0,
+                5000,
+                value=None,
+                placeholder="Masukkan waktu penggunaan app",
             )
             monthly_spend = st.number_input(
-                "Pengeluaran Bulanan (USD)", 
-                0, 
-                1000, 
-                value=None, 
-                placeholder="Masukkan pengeluaran bulanan"
+                "Pengeluaran Bulanan (Rupiah)",
+                0,
+                10000000,
+                value=None,
+                placeholder="Masukkan pengeluaran bulanan",
             )
             discount_pct = st.number_input(
-                "Persentase Diskon yang Digunakan", 
-                0, 
-                100, 
-                value=None, 
-                placeholder="Masukkan persentase diskon yang digunakan"
+                "Persentase Diskon yang Digunakan",
+                0,
+                100,
+                value=None,
+                placeholder="Masukkan persentase diskon yang digunakan",
             )
             support_calls = st.number_input(
-                "Jumlah Panggilan Komplain", 
-                0, 
-                20, 
-                value=None, 
-                placeholder="Masukkan jumlah panggilan komplain ke customer service"
+                "Jumlah Panggilan Komplain",
+                0,
+                50,
+                value=None,
+                placeholder="Masukkan jumlah panggilan komplain ke customer service",
             )
             satisfaction = st.slider(
-                "Skor Kepuasan (1-5)", 
-                1, 
-                5, 
-                value=1, 
-                help="Pilih Tingkat kepuasan"
+                "Skor Kepuasan (1-5)", 1, 5, value=1, help="Pilih Tingkat kepuasan"
             )
             contract_type = st.selectbox(
-                "Jenis Kontrak", 
-                ["Monthly", "Annual"], 
-                index=None, 
-                placeholder="Pilih jenis kontrak"
+                "Jenis Kontrak",
+                ["Monthly", "Annual"],
+                index=None,
+                placeholder="Pilih jenis kontrak",
             )
 
             # Tombol submit button untuk menjalankan prediksi
             submit_button = st.form_submit_button("Analisis Sekarang")
-        
+
+        # Tambahkan garis vertikal sebagai pemisah dengan space kecil di antaranya
+        with space:
+            st.markdown(
+                """
+                <div style="
+                    border-left: 1px solid rgba(128,128,128,0.25);
+                    height: 1000px;
+                    margin: auto;
+                "></div>
+                """,
+                unsafe_allow_html=True,
+            )
+
         with col2:
             st.subheader("📊 Hasil Analisis Prediksi")
-              
             if submit_button:
                 required_fields = [
                     customer_name,
@@ -134,7 +130,7 @@ def render_prediction():
                     discount_pct,
                     support_calls,
                     satisfaction,
-                    contract_type
+                    contract_type,
                 ]
                 # Validasi input
                 if any(v is None for v in required_fields):
@@ -156,24 +152,26 @@ def render_prediction():
                     }
 
                     try:
-                        with st.spinner("🤖 AI sedang menganalisis perilaku pelanggan..."):
+                        with st.spinner(
+                            "🤖 AI sedang menganalisis perilaku pelanggan..."
+                        ):
                             hasil = predict_churn(input_data)
                             try:
-                                save_prediction(
-                                    customer_name,
-                                    input_data,
-                                    hasil
-                                )
+                                save_prediction(customer_name, input_data, hasil)
                                 st.toast("✅ Prediksi berhasil disimpan ke database!")
                             except Exception as e:
-                                st.error(f"⚠️ Gagal menyimpan prediksi ke database: {e}")
+                                st.error(
+                                    f"⚠️ Gagal menyimpan prediksi ke database: {e}"
+                                )
 
                         if hasil["Prediksi"] == 1:
                             st.error(f"### {hasil['Label']}")
                         else:
                             st.success(f"### {hasil['Label']}")
 
-                        st.metric("Probabilitas Churn", f"{hasil['Probabilitas Churn']:.1%}")
+                        st.metric(
+                            "Probabilitas Churn", f"{hasil['Probabilitas Churn']:.1%}"
+                        )
 
                         risk_colors = {
                             "Critical Risk": "🔴",
@@ -187,21 +185,25 @@ def render_prediction():
                         # Analisis Faktor Penyebab
                         st.markdown("---")
                         st.subheader("🔍 Analisis Faktor Penyebab")
-                        
+
                         # Penjelasan SHAP
-                        shap_values = hasil.get("Penjelasan SHAP", []) 
+                        shap_values = hasil.get("Penjelasan SHAP", [])
                         if shap_values:
                             df_plot = pd.DataFrame(shap_values)
-                            
+
                             for item in shap_values:
                                 if item["Kategori"] == "risk":
                                     st.warning(f"⚠️ **{item['Faktor']}**")
                                     st.markdown(f"**Dampak:** {item['Pengaruh']}")
-                                    st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")
+                                    st.info(
+                                        f"💡 **Rekomendasi:** {item['Rekomendasi']}"
+                                    )
                                 else:
                                     st.success(f"✅ **{item['Faktor']}**")
                                     st.markdown(f"**Dampak:** {item['Pengaruh']}")
-                                    st.info(f"💡 **Rekomendasi:** {item['Rekomendasi']}")
+                                    st.info(
+                                        f"💡 **Rekomendasi:** {item['Rekomendasi']}"
+                                    )
                         else:
                             st.info("Tidak ada faktor tambahan yang dapat ditampilkan.")
 

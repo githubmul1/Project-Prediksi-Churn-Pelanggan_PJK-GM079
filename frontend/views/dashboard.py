@@ -37,6 +37,8 @@ def render_stats_widgets():
 
     churn_rate = filtered_df["prediction"].mean()  # tingkat churn
 
+    avg_age = filtered_df["age"].mean()  # rata-rata usia pelanggan
+
     avg_probability = filtered_df[
         "churn_probability"
     ].mean()  # rata-rata probabilitas churn
@@ -45,7 +47,7 @@ def render_stats_widgets():
         filtered_df[filtered_df["risk_level"].isin(["Critical Risk", "High Risk"])]
     )  # jumlah pelanggan risiko tinggi
 
-    col1, col2, col3, col4 = st.columns(4)  # bagi dalam 4 kolom
+    col1, col2, col3, col4, col5 = st.columns(5)  # bagi dalam 5 kolom
 
     with col1:  # kolom 1 total prediksi
         with st.container(border=True):
@@ -62,6 +64,10 @@ def render_stats_widgets():
     with col4:  # kolom 4 jumlah pengguna dengan risiko churn tinggi
         with st.container(border=True):
             st.metric("High Risk Customer", high_risk_count)
+
+    with col5:  # kolom 5 rata-rata usia pelanggan
+        with st.container(border=True):
+            st.metric("Avg Age", f"{avg_age:.1f}")
 
     st.markdown("---")  # buat garis
 
