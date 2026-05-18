@@ -68,8 +68,6 @@ def render_stats_widgets():
         with st.container(border=True):
             st.metric("Avg Age", f"{avg_age:.1f}")
 
-    st.markdown("---")  # buat garis
-
     # buat 3 kolom berikutnya
     col1, col2, col3 = st.columns(3)
 
