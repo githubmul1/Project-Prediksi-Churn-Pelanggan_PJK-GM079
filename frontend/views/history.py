@@ -54,16 +54,51 @@ def render_history():
     else:
         st.info("💡 Tidak ada pelanggan dengan kategori risiko tinggi dalam riwayat saat ini.")
 
-    # Tabel Inferensi Lengkap
-    st.subheader("📋 Seluruh Riwayat Prediksi")
-    st.dataframe(df_clean, use_container_width=True)
+    st.markdown("---")  # Garis pemisah
 
+    # Tabel Inferensi Lengkap Dengan Filter
+    col1, col2 = st.columns([1, 0.3])
+    with col1:
+        st.subheader("📋 Riwayat Prediksi")
+
+    with col2:
+        available_risks = df["risk_level"].dropna().unique().tolist()
+        filter_options = ["Semua"] + available_risks
+        
+        selected_risk = st.selectbox(
+            label="Saring Berdasarkan Risiko:",
+            options=filter_options,
+            index=0,
+            label_visibility="collapsed"
+        )
+
+    # Terapkan filter berdasarkan pilihan risiko
+    df_clean_all = df.copy()
+    df_clean_all.columns = df_clean_all.columns.str.replace('_', ' ').str.title()   
+    if selected_risk != "Semua":
+        df_filtered_base = df[df["risk_level"] == selected_risk]
+    else:
+        df_filtered_base = df.copy()
+
+    # Siapkan data filter versi bersih untuk ditampilkan di tabel utama
+    df_clean_filtered = df_filtered_base.copy()
+    df_clean_filtered.columns = df_clean_filtered.columns.str.replace('_', ' ').str.title()
+
+    # Tampilkan teks jumlah baris dan visualisasi tabel utama
+    if selected_risk != "Semua":
+        st.caption(f"Menampilkan kategori **{selected_risk}**: **{len(df_clean_filtered)}** dari total **{len(df_clean_all)}** riwayat.")
+    else:
+        st.caption(f"Menampilkan **{len(df_clean_filtered)}** dari total **{len(df_clean_all)}** data hasil prediksi.")
+        
+    st.dataframe(df_clean_filtered, use_container_width=True)
     # Export CSV
     st.subheader("⬇️ Export Data")
-    csv = df_clean.to_csv(index=False).encode("utf-8")
+    csv = df_clean_filtered.to_csv(index=False).encode("utf-8")
+    file_name_csv = "churn_predictions_history.csv" if selected_risk == "Semua" else f"churn_history_{selected_risk.lower().replace(' ', '_')}.csv"
+    
     st.download_button(
-        label="Download CSV",
+        label=f"Download CSV ({selected_risk})",
         data=csv,
-        file_name="churn_predictions_history.csv",
+        file_name=file_name_csv,
         mime="text/csv",
     )

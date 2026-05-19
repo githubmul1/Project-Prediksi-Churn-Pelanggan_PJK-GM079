@@ -58,7 +58,7 @@ def render_stats_widgets():
         filtered_df[filtered_df["Risk Level"].isin(["Critical Risk", "High Risk"])]
     )  # jumlah pelanggan risiko tinggi
 
-    col1, col2, col3, col4 = st.columns(4)  # bagi dalam 4 kolom
+    col1, col2, col3, col4, col5 = st.columns(5)  # bagi dalam 5 kolom
 
     with col1:  # kolom 1 total prediksi
         with st.container(border=True):
@@ -75,6 +75,15 @@ def render_stats_widgets():
     with col4:  # kolom 4 jumlah pengguna dengan risiko churn tinggi
         with st.container(border=True):
             st.metric("Pelanggan Risiko Tinggi", high_risk_count)
+
+    with col5:  # kolom 5 akurasi model
+        with st.container(border=True):
+            model_accuracy = 0.909
+            st.metric(
+                label = "Akurasi Model",
+                value = f"{model_accuracy:.1%}",
+                help='Akurasi model berdasarkan evaluasi pada dataset validasi. Nilai ini menunjukkan seberapa baik model memprediksi risiko churn pelanggan.'
+            )
 
     st.markdown("---")  # buat garis
 

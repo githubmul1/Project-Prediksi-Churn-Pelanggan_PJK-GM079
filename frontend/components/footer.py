@@ -3,7 +3,7 @@ import streamlit as st
 def render_footer():
     st.write("---") # Garis pemisah
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3= st.columns([4, 4, 2])
     
     with col1:
         st.markdown("**Prediksi Churn Pelanggan**")
