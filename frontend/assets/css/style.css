@@ -1,0 +1,48 @@
+/* Font Global */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap');
+
+html, body, [data-testid="stAppViewContainer"] {
+    font-family: 'Inter', sans-serif;
+    background-color: #F8FAFC !important; 
+}
+
+/* Metrik card kontainer */
+div[data-testid="stMetricContainer"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 110px;
+}
+
+/* Judul dalam metrik */
+div[data-testid="stMetricLabel"] p {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #64748B !important; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Angka utama dalam metrik */
+div[data-testid="stMetricValue"] div {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #0F172A !important; 
+    margin-top: 10px !important;
+}
+
+div[data-testid="stMetricDelta"] {
+    display: none !important;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"] > div {
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+}
