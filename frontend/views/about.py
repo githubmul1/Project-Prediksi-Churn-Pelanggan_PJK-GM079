@@ -8,7 +8,7 @@ def render_about():
     )
     st.markdown(
         """
-        Aplikasi ini dirancang untuk membantu bisnis e-commerce dalam memprediksi risiko churn pelanggan. Dengan menggunakan model machine learning yang telah dilatih, aplikasi ini dapat memberikan wawasan tentang pelanggan yang berpotensi berhenti berlangganan, sehingga memungkinkan bisnis untuk mengambil tindakan proaktif dalam mempertahankan pelanggan.
+        Aplikasi ini dirancang untuk membantu bisnis e-commerce dalam memprediksi risiko churn pelanggan. Aplikasi ini dekembangkan menggunakan algoritma machine learning Random Forest. Aplikasi ini diharapkan dapat memberikan wawasan tentang pelanggan yang berpotensi berhenti berlangganan, sehingga memungkinkan bisnis untuk mengambil tindakan proaktif dalam mempertahankan pelanggan.
         
         **Fitur Utama:**
         - **Dashboard Analisis:** Menampilkan statistik penting seperti total dataset, potensi churn, dan akurasi model.
