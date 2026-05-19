@@ -70,11 +70,11 @@ def render_stats_widgets():
 
     with col3:  # kolom 3 rata-rata kemungkinan churn
         with st.container(border=True):
-            st.metric("Avg Churn Probability", f"{avg_probability:.1%}")
+            st.metric("Rata-Rata Probabilitas Churn", f"{avg_probability:.1%}")
 
     with col4:  # kolom 4 jumlah pengguna dengan risiko churn tinggi
         with st.container(border=True):
-            st.metric("High Risk Customer", high_risk_count)
+            st.metric("Pelanggan Risiko Tinggi", high_risk_count)
 
     st.markdown("---")  # buat garis
 
@@ -94,7 +94,7 @@ def render_stats_widgets():
 
         fig_trend = px.line(trend_group, x="Date_Str", y="total", markers=True)
 
-        fig_trend.update_traces(line=dict(color="#0EA5E9", width=3))
+        fig_trend.update_traces(line=dict(color="#0284C7", width=3))
 
         fig_trend.update_layout(
             xaxis_title="Tanggal",
@@ -106,13 +106,15 @@ def render_stats_widgets():
     # kolom 2 pie cart pengguna risiko tinggi
     with col_chart2:
 
-        st.subheader("⚠️ Risk Level")
+        st.subheader("⚠️ Level Risiko Pelanggan")
 
         risk_group = filtered_df["Risk Level"].value_counts().reset_index()
 
         risk_group.columns = ["Risk Level", "Count"]
 
         fig_risk = px.pie(risk_group, names="Risk Level", values="Count", hole=0.4)
+
+        fig_risk.update_layout(paper_bgcolor="rgba(0,0,0,0)")
 
         color_map = {
             "Critical Risk": "#FF4B4B",
@@ -141,6 +143,7 @@ def render_stats_widgets():
         fig_contract.update_traces(marker_color="#8B5CF6")
 
         fig_contract.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
             xaxis_title="Jenis Kontrak",
             yaxis_title="Total Pelanggan",
         )
