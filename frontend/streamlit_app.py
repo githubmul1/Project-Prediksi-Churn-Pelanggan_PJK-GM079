@@ -34,6 +34,11 @@ if menu == "Dashboard":
 elif menu == "Prediksi Churn":
     prediction.render_prediction()
 
+elif menu == "Riwayat Prediksi":
+    from frontend.views import history
+
+    history.render_history()
+
 elif menu == "Tentang Aplikasi":
     about.render_about()
 
