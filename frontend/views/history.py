@@ -21,12 +21,12 @@ def render_history():
     css_path = os.path.abspath(os.path.join(current_dir, "../assets/css/style.css"))
     local_css(css_path)
 
-    st.markdown(
-        """
-        Di halaman ini, Anda dapat melihat riwayat prediksi churn pelanggan yang telah dilakukan sebelumnya. 
-        Setiap entri dalam riwayat mencakup informasi tentang pelanggan, hasil prediksi, dan waktu prediksi dilakukan.
-        """
-    )
+    col = st.columns(1)
+    with col[0]:
+         st.markdown(
+            '## <i class="fas fa-solid fa-clock-rotate-left"></i> 📖 Riwayat Prediksi',
+            unsafe_allow_html=True,
+        )
 
     # Ambil data dari database
     conn = get_connection()
@@ -41,31 +41,14 @@ def render_history():
     df_clean = df.copy()
     df_clean.columns = df_clean.columns.str.replace('_', ' ').str.title()
 
-    # Tabel untuk pelanggan risiko tinggi
-    st.subheader("🚨 Pelanggan Risiko Tinggi")
-    
-    high_risk_data = df[df["risk_level"].isin(["Critical Risk", "High Risk"])]
-    
-    if not high_risk_data.empty:
-        high_risk_display = high_risk_data.copy()
-        high_risk_display.columns = high_risk_display.columns.str.replace('_', ' ').str.title()
-        st.dataframe(high_risk_display, use_container_width=True)
-    else:
-        st.info("💡 Tidak ada pelanggan dengan kategori risiko tinggi dalam riwayat saat ini.")
-
-    st.markdown("---")  # Garis pemisah
-
     # Tabel Inferensi Lengkap Dengan Filter
-    col1, col2 = st.columns([1, 0.3])
-    with col1:
-        st.subheader("📋 Riwayat Prediksi")
-
-    with col2:
+    col_space, col_fil = st.columns([3, 1])
+    with col_fil:
         available_risks = df["risk_level"].dropna().unique().tolist()
         filter_options = ["Semua"] + available_risks
         
         selected_risk = st.selectbox(
-            label="Saring Berdasarkan Risiko:",
+            label="Filter Berdasarkan Risiko:",
             options=filter_options,
             index=0,
             label_visibility="collapsed"
@@ -83,6 +66,7 @@ def render_history():
     df_clean_filtered = df_filtered_base.copy()
     df_clean_filtered.columns = df_clean_filtered.columns.str.replace('_', ' ').str.title()
 
+    # Membuat paginasi untuk tabel riwayat prediksi
     rows_per_page_history = 10
     total_rows_history = len(df_clean_filtered)
     total_pages = (total_rows_history - 1) // rows_per_page_history + (1 if total_rows_history % rows_per_page_history > 0 else 0)
@@ -90,7 +74,8 @@ def render_history():
                     
     if "current_page" not in st.session_state:
         st.session_state.current_page = 1
-                    
+
+    # Navigasi paginasi               
     with col_prev:
         if st.button("⬅️ Halaman Sebelumnya") and st.session_state.current_page > 1:
             st.session_state.current_page -= 1
