@@ -3,7 +3,7 @@ import streamlit as st
 def render_footer():
     st.write("---") # Garis pemisah
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3= st.columns([4, 4, 2])
     
     with col1:
         st.markdown("**Prediksi Churn Pelanggan**")
@@ -11,7 +11,7 @@ def render_footer():
         
     with col2:
         st.markdown("**Navigasi Cepat**")
-        st.caption("• Dashboard\n• Prediksi Churn\n• Tentang Aplikasi")
+        st.caption("• Dashboard\n• Prediksi Churn\n• Riwayat Prediksi\n• Tentang Aplikasi")
         
     with col3:
         st.markdown("**Tim PJK-GM079**")

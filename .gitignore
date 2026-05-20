@@ -6,3 +6,4 @@ data/
 mlflow.db
 mlartifacts/
 models/*.pkl
+database/output.db

@@ -8,8 +8,8 @@ def render_navbar():
     with menu_col:
         selected = option_menu(
             menu_title=None, 
-            options=["Dashboard", "Prediksi Churn", "Tentang Aplikasi"],
-            icons=["house", "calculator", "info-circle"], 
+            options=["Dashboard", "Prediksi Churn", "Riwayat Prediksi", "Tentang Aplikasi"],
+            icons=["house", "calculator", "clock", "info-circle"], 
             menu_icon="cast",
             default_index=0,
             orientation="horizontal",

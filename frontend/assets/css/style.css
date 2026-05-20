@@ -1,0 +1,60 @@
+/* Font Global */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap');
+
+html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color) !important;
+}
+
+/* Metrik card kontainer */
+div[data-testid="stMetricContainer"] {
+    background-color: var(--secondary-background-color) !important;
+    border: 1px solid rgba(128, 128, 128, 0.15) !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 110px;
+}
+
+/* Judul dalam metrik */
+div[data-testid="stMetricLabel"] p {
+    font-size: 12px !important; 
+    font-weight: 600 !important;
+    color: var(--text-color) !important; 
+    opacity: 0.65;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0px !important;
+}
+
+/* Angka utama dalam metrik */
+div[data-testid="stMetricValue"] div {
+    font-size: 28px !important; 
+    font-weight: 700 !important;
+    color: var(--text-color) !important; 
+    margin-top: 6px !important;
+}
+
+/* Menghilangkan panah delta kosong */
+div[data-testid="stMetricDelta"] {
+    display: none !important;
+}
+
+/* Grafik untuk plotly */
+div[data-testid="stVerticalBlockBorderWrapper"] > div {
+    border: 1px solid rgba(128, 128, 128, 0.15) !important;
+    border-radius: 12px !important;
+    background-color: var(--secondary-background-color) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03) !important;
+    padding: 15px !important;
+}
+
+/* Memastikan judul sub-bab grafis sewarna dengan tema yang aktif */
+div[data-testid="stVerticalBlockBorderWrapper"] h3 {
+    color: var(--text-color) !important;
+    font-weight: 700 !important;
+    margin-bottom: 15px !important;
+}
