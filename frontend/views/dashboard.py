@@ -58,7 +58,7 @@ def render_stats_widgets():
         filtered_df[filtered_df["Risk Level"].isin(["Critical Risk", "High Risk"])]
     )  # jumlah pelanggan risiko tinggi
 
-    col1, col2, col3, col4, col5 = st.columns(5)  # bagi dalam 5 kolom
+    col1, col2, col3, col4, = st.columns(4)  # bagi dalam 4 kolom
 
     with col1:  # kolom 1 total prediksi
         with st.container(border=True):
@@ -76,16 +76,7 @@ def render_stats_widgets():
         with st.container(border=True):
             st.metric("Pelanggan Risiko Tinggi", high_risk_count)
 
-    with col5:  # kolom 5 akurasi model
-        with st.container(border=True):
-            model_accuracy = 0.909
-            st.metric(
-                label = "Akurasi Model",
-                value = f"{model_accuracy:.1%}",
-                help='Akurasi model berdasarkan evaluasi pada dataset validasi. Nilai ini menunjukkan seberapa baik model memprediksi risiko churn pelanggan.'
-            )
-
-    st.markdown("---")  # buat garis
+    st.markdown("---")  # buat garis pemisah
 
     # buat 3 kolom berikutnya
     col_chart1, col_chart2, col_chart3 = st.columns(3)
@@ -149,7 +140,7 @@ def render_stats_widgets():
 
         fig_contract = px.bar(contract_group, x="Contract Type", y="Count")
 
-        fig_contract.update_traces(marker_color="#8B5CF6")
+        fig_contract.update_traces(marker_color=["#343187", "#5C92F6"])
 
         fig_contract.update_layout(
             paper_bgcolor="rgba(0,0,0,0)",

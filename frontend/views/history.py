@@ -21,7 +21,6 @@ def render_history():
     css_path = os.path.abspath(os.path.join(current_dir, "../assets/css/style.css"))
     local_css(css_path)
 
-    st.markdown("## ⏳ Riwayat Prediksi")
     st.markdown(
         """
         Di halaman ini, Anda dapat melihat riwayat prediksi churn pelanggan yang telah dilakukan sebelumnya. 
@@ -84,13 +83,35 @@ def render_history():
     df_clean_filtered = df_filtered_base.copy()
     df_clean_filtered.columns = df_clean_filtered.columns.str.replace('_', ' ').str.title()
 
-    # Tampilkan teks jumlah baris dan visualisasi tabel utama
-    if selected_risk != "Semua":
-        st.caption(f"Menampilkan kategori **{selected_risk}**: **{len(df_clean_filtered)}** dari total **{len(df_clean_all)}** riwayat.")
-    else:
-        st.caption(f"Menampilkan **{len(df_clean_filtered)}** dari total **{len(df_clean_all)}** data hasil prediksi.")
-        
-    st.dataframe(df_clean_filtered, use_container_width=True)
+    rows_per_page_history = 10
+    total_rows_history = len(df_clean_filtered)
+    total_pages = (total_rows_history - 1) // rows_per_page_history + (1 if total_rows_history % rows_per_page_history > 0 else 0)
+    col_prev, col_info, col_next = st.columns([1, 2, 1])
+                    
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = 1
+                    
+    with col_prev:
+        if st.button("⬅️ Halaman Sebelumnya") and st.session_state.current_page > 1:
+            st.session_state.current_page -= 1
+            st.rerun()
+
+    with col_info:
+        st.markdown(f"<div style='text-align: center; font-weight: bold; padding-top: 5px;'>Halaman {st.session_state.current_page} dari {total_pages}</div>", unsafe_allow_html=True)
+
+    with col_next:
+        if st.button("➡️ Halaman Berikutnya") and st.session_state.current_page < total_pages:
+            st.session_state.current_page += 1
+            st.rerun()
+
+    start_idx = (st.session_state.current_page - 1) * rows_per_page_history
+    end_idx = start_idx + rows_per_page_history
+    df_paginated = df_clean_filtered.iloc[start_idx:end_idx]
+
+    st.dataframe(df_paginated, use_container_width=True)
+
+    st.caption(f"Menampilkan data pelanggan dari baris {start_idx + 1} hingga {min(end_idx, total_rows_history)} dari total {total_rows_history} hasil prediksi.")
+
     # Export CSV
     st.subheader("⬇️ Export Data")
     csv = df_clean_filtered.to_csv(index=False).encode("utf-8")

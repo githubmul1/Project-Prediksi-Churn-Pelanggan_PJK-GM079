@@ -187,7 +187,19 @@ def render_prediction():
                 "Satisfaction_Score,"
                 "Contract_Type")
             st.caption("Pastikan nama kolom sama persis seperti contoh di atas (sensitif huruf besar/kecil).")
-
+        
+        template_header = "Nama_Pelanggan,Age,Subscription_Duration_Months,Monthly_Logins,Last_Purchase_Days_Ago,App_Usage_Time_Min,Monthly_Spend,Discount_Usage_Percentage,Customer_Support_Calls,Satisfaction_Score,Contract_Type\n"
+            
+            # Fungsi tombol Download otomatis untuk file template
+        st.download_button(
+            label="📥 Download Template CSV",
+            data=template_header.encode("utf-8"),
+            file_name="template_prediksi_churn.csv",
+            mime="text/csv",
+            help="Klik di sini untuk mengunduh template file CSV kosong."
+            )
+            
+        st.caption("💡 Tip: Setelah diunduh, Anda bisa langsung membukanya di Excel, mengisi data pelanggan di baris bawahnya, lalu menyimpannya kembali dalam format .csv.")
         uploaded_file = st.file_uploader("Pilih Berkas CSV Anda", type=["csv"])
 
         if uploaded_file is not None:
@@ -243,6 +255,38 @@ def render_prediction():
                     st.markdown("---")
                     st.subheader("📊 Hasil Prediksi Masal")
                     st.dataframe(df_hasil, use_container_width=True)
+
+                    # Membuat paginasi untuk tabel hasil prediksi massal
+                    rows_per_page = 20 # jumlah baris yang ditampilkan per halaman
+                    total_rows = len(df_hasil)
+                    total_pages = (total_rows - 1) // rows_per_page + (1 if total_rows % rows_per_page > 0 else 0)
+                    col_prev, col_info, col_next = st.columns([1, 2, 1])
+                    
+                    if "current_page" not in st.session_state:
+                        st.session_state.current_page = 1
+                    
+                    # Navigasi paginasi
+                    with col_prev:
+                        if st.button("⬅️ Halaman Sebelumnya") and st.session_state.current_page > 1:
+                            st.session_state.current_page -= 1
+                            st.rerun()
+
+                    with col_info:
+                        st.markdown(f"<div style='text-align: center; font-weight: bold; padding-top: 5px;'>Halaman {st.session_state.current_page} dari {total_pages}</div>", unsafe_allow_html=True)
+
+                    with col_next:
+                        if st.button("➡️ Halaman Berikutnya") and st.session_state.current_page < total_pages:
+                            st.session_state.current_page += 1
+                            st.rerun()
+
+                    # Menentukan indeks untuk paginasi
+                    start_idx = (st.session_state.current_page - 1) * rows_per_page
+                    end_idx = start_idx + rows_per_page
+                    df_paginated = df_hasil.iloc[start_idx:end_idx]
+
+                    st.dataframe(df_paginated, use_container_width=True)
+
+                    st.caption(f"Menampilkan data pelanggan dari baris {start_idx + 1} hingga {min(end_idx, total_rows)} dari total {total_rows} hasil prediksi.")
                     
                     # Ringkasan data hasil prediksi massal
                     total_churn = len(df_hasil[df_hasil["Hasil_Prediksi"].str.contains("Churn")])
