@@ -1,4 +1,5 @@
 # Import Library yang dibutuhkan
+import json
 import os
 import joblib
 import mlflow
@@ -20,7 +21,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-from config import DATA_DIR, MODEL_PATH
+from config import DATA_DIR, MODEL_PATH, SRC_DIR
 
 # Set MLFlow tracking dan nama eksperiment
 mlflow.set_tracking_uri("http://127.0.0.1:5000/")
@@ -151,6 +152,17 @@ with mlflow.start_run():
         artifact_path="model",
         input_example=X_train.iloc[0:5],
     )
+    # simpan metrics ke file .json
+    metrics = {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "f1_score": f1,
+        "roc_auc": roc_auc,
+    }
+
+    with open(os.path.join(SRC_DIR, "metrics.json"), "w") as f:
+        json.dump(metrics, f, indent=4)
 
     # save joblib pipeline
     joblib.dump(full_pipeline, MODEL_PATH)
