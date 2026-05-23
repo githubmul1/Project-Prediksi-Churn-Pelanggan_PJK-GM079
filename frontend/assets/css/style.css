@@ -58,3 +58,24 @@ div[data-testid="stVerticalBlockBorderWrapper"] h3 {
     font-weight: 700 !important;
     margin-bottom: 15px !important;
 }
+
+/* Styling untuk tab */
+button[data-baseweb="tab"] p {
+    font-size: 1.15rem !important;
+    font-weight: 600 !important;
+}
+
+/* Memberikan padding agar tab lebih nyaman diklik */
+button[data-baseweb="tab"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+/* Garis pembatas vertikal antar kolom form manual */
+.vertical-divider {
+    border-left: 1px solid rgba(128,128,128,0.25); 
+    height: 850px; 
+    margin: auto;
+}

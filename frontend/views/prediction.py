@@ -18,6 +18,11 @@ def render_prediction():
         unsafe_allow_html=True,
     )
 
+    css_path = os.path.join(current_dir, "../assets/css/style.css")
+    if os.path.exists(css_path):
+        with open(css_path) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
     st.markdown("## 🤖 Prediksi Churn Pelanggan")
 
     tab_manual, tab_file = st.tabs(["✍️ Input Manual", "📁 Unggah File CSV"])
@@ -254,7 +259,6 @@ def render_prediction():
                     
                     st.markdown("---")
                     st.subheader("📊 Hasil Prediksi Masal")
-                    st.dataframe(df_hasil, use_container_width=True)
 
                     # Membuat paginasi untuk tabel hasil prediksi massal
                     rows_per_page = 20 # jumlah baris yang ditampilkan per halaman
