@@ -11,7 +11,6 @@ if project_root not in sys.path:
 from database.save_output import save_prediction
 from src.inference import predict_churn
 
-
 def render_prediction():
     st.markdown(
         '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">',
@@ -93,8 +92,11 @@ def render_prediction():
                     )
                 
                 satisfaction = st.slider(
-                    "Skor Kepuasan (1-5)", 1, 5,
-                    value=1
+                    "Skor Kepuasan (1-5)",
+                    min_value=1,
+                    max_value=5,
+                    value=1,
+                    help="Geser untuk memilih skor kepuasan pelanggan"
                     )
                 
                 contract_type = st.selectbox(

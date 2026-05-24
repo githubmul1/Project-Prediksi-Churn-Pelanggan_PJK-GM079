@@ -1,3 +1,5 @@
+import os
+import json
 import streamlit as st
 from components.footer import render_footer
 
@@ -9,7 +11,44 @@ def render_about():
     st.markdown(
         """
         Aplikasi ini dirancang dan dikembangkan oleh Tim PJK-GM079 untuk membantu bisnis e-commerce dalam memprediksi risiko churn pelanggan. Model machine learning yang digunakan dalam aplikasi ini dilatih menggunakan dataset pelanggan yang mencakup berbagai fitur seperti usia, jenis kelamin, lama berlangganan, dan interaksi dengan layanan, dimana ada **15.000** data pelanggan yang digunakan untuk melatih model. Dengan menggunakan algoritma Random Forest dan akurasi model mencapai **90.9%**, aplikasi ini dapat memberikan prediksi yang akurat tentang pelanggan yang berpotensi berhenti berlangganan, sehingga memungkinkan bisnis untuk mengambil tindakan proaktif dalam mempertahankan pelanggan.
-        
+        """
+    )
+
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(current_dir, "../../src/metrics.json")
+
+    metrics = {}
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, "r") as f:
+                metrics = json.load(f)
+        except json.JSONDecodeError:
+            st.error("❌ Terjadi kesalahan saat membaca file metrics.json")
+    else:
+        st.warning("⚠️ File metrics.json tidak ditemukan. Pastikan model sudah dijalankan setidaknya sekali.")
+
+    st.markdown("## Statistik Model")
+    
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        acc_val = float(metrics.get("accuracy", 0.0))
+        st.metric(label="Akurasi", value=f"{acc_val:.1%}")
+    with col2:
+        prec_val = float(metrics.get("precision", 0.0))
+        st.metric(label="Presisi", value=f"{prec_val:.1%}")
+    with col3:
+        rec_val = float(metrics.get("recall", 0.0))
+        st.metric(label="Recall", value=f"{rec_val:.1%}")
+    with col4:
+        f1_val = float(metrics.get("f1_score", 0.0))
+        st.metric(label="F1 Score", value=f"{f1_val:.1%}")
+    with col5:
+        roc_val = float(metrics.get("roc_auc", 0.0))
+        st.metric(label="ROC AUC", value=f"{roc_val:.1%}")
+
+
+    st.markdown("""
         **Fitur Utama:**
         - **Dashboard Analisis:** Menampilkan statistik penting seperti total dataset, potensi churn, dan akurasi model.
         - **Prediksi Churn:** Form input dan upload file CSV untuk memasukkan data pelanggan dan mendapatkan prediksi risiko churn secara instan.
