@@ -11,12 +11,16 @@ if project_root not in sys.path:
 from database.save_output import save_prediction
 from src.inference import predict_churn
 
-
 def render_prediction():
     st.markdown(
         '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">',
         unsafe_allow_html=True,
     )
+
+    css_path = os.path.join(current_dir, "../assets/css/style.css")
+    if os.path.exists(css_path):
+        with open(css_path) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
     st.markdown("## 🤖 Prediksi Churn Pelanggan")
 
@@ -88,8 +92,11 @@ def render_prediction():
                     )
                 
                 satisfaction = st.slider(
-                    "Skor Kepuasan (1-5)", 1, 5,
-                    value=1
+                    "Skor Kepuasan (1-5)",
+                    min_value=1,
+                    max_value=5,
+                    value=1,
+                    help="Geser untuk memilih skor kepuasan pelanggan"
                     )
                 
                 contract_type = st.selectbox(
@@ -254,7 +261,6 @@ def render_prediction():
                     
                     st.markdown("---")
                     st.subheader("📊 Hasil Prediksi Masal")
-                    st.dataframe(df_hasil, use_container_width=True)
 
                     # Membuat paginasi untuk tabel hasil prediksi massal
                     rows_per_page = 20 # jumlah baris yang ditampilkan per halaman
