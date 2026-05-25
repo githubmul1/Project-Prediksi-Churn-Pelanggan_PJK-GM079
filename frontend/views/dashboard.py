@@ -5,12 +5,15 @@ import plotly.express as px
 
 from database.connect_db import get_connection
 
+
 def local_css(file_name):
     if os.path.exists(file_name):
         with open(file_name) as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+
 local_css("assets/css/style.css")
+
 
 def render_stats_widgets():
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -34,7 +37,7 @@ def render_stats_widgets():
         st.warning("Belum ada data prediksi.")
         return
 
-    df_columns = df.columns.str.replace('_', ' ').str.title()
+    df_columns = df.columns.str.replace("_", " ").str.title()
     df.columns = df_columns
 
     # konversi datetime
@@ -58,7 +61,14 @@ def render_stats_widgets():
         filtered_df[filtered_df["Risk Level"].isin(["Critical Risk", "High Risk"])]
     )  # jumlah pelanggan risiko tinggi
 
-    col1, col2, col3, col4, = st.columns(4)  # bagi dalam 4 kolom
+    (
+        col1,
+        col2,
+        col3,
+        col4,
+    ) = st.columns(
+        4
+    )  # bagi dalam 4 kolom
 
     with col1:  # kolom 1 total prediksi
         with st.container(border=True):
@@ -76,76 +86,74 @@ def render_stats_widgets():
         with st.container(border=True):
             st.metric("Pelanggan Risiko Tinggi", high_risk_count)
 
-    st.markdown("---")  # buat garis pemisah
-
     # buat 3 kolom berikutnya
     col_chart1, col_chart2, col_chart3 = st.columns(3)
 
     # tren harian
     with col_chart1:
+        with st.container(border=True):
+            st.subheader("📈 Tren Prediksi")
 
-        st.subheader("📈 Tren Prediksi")
+            trend_df = filtered_df.copy()
 
-        trend_df = filtered_df.copy()
+            trend_df["Date_Str"] = trend_df["Timestamp"].dt.strftime("%d-%m-%Y")
 
-        trend_df["Date_Str"] = trend_df["Timestamp"].dt.strftime("%d-%m-%Y")
+            trend_group = trend_df.groupby("Date_Str").size().reset_index(name="total")
 
-        trend_group = trend_df.groupby("Date_Str").size().reset_index(name="total")
+            fig_trend = px.line(trend_group, x="Date_Str", y="total", markers=True)
 
-        fig_trend = px.line(trend_group, x="Date_Str", y="total", markers=True)
+            fig_trend.update_traces(line=dict(color="#0284C7", width=3))
 
-        fig_trend.update_traces(line=dict(color="#0284C7", width=3))
+            fig_trend.update_layout(
+                xaxis_title="Tanggal",
+                yaxis_title="Total Prediksi",
+            )
 
-        fig_trend.update_layout(
-            xaxis_title="Tanggal",
-            yaxis_title="Total Prediksi",
-        )
-
-        st.plotly_chart(fig_trend, use_container_width=True)
+            st.plotly_chart(fig_trend, use_container_width=True)
 
     # kolom 2 pie cart pengguna risiko tinggi
     with col_chart2:
+        with st.container(border=True):
+            st.subheader("⚠️ Level Risiko Pelanggan")
 
-        st.subheader("⚠️ Level Risiko Pelanggan")
+            risk_group = filtered_df["Risk Level"].value_counts().reset_index()
 
-        risk_group = filtered_df["Risk Level"].value_counts().reset_index()
+            risk_group.columns = ["Risk Level", "Count"]
 
-        risk_group.columns = ["Risk Level", "Count"]
+            fig_risk = px.pie(risk_group, names="Risk Level", values="Count", hole=0.4)
 
-        fig_risk = px.pie(risk_group, names="Risk Level", values="Count", hole=0.4)
+            fig_risk.update_layout(paper_bgcolor="rgba(0,0,0,0)")
 
-        fig_risk.update_layout(paper_bgcolor="rgba(0,0,0,0)")
+            color_map = {
+                "Critical Risk": "#FF4B4B",
+                "High Risk": "#FF7F50",
+                "Medium Risk": "#FFD700",
+                "Low Risk": "#32CD32",
+            }
 
-        color_map = {
-            "Critical Risk": "#FF4B4B",
-            "High Risk": "#FF7F50",
-            "Medium Risk": "#FFD700",
-            "Low Risk": "#32CD32",
-        }
+            colors = [color_map.get(x, "#3B82F6") for x in risk_group["Risk Level"]]
 
-        colors = [color_map.get(x, "#3B82F6") for x in risk_group["Risk Level"]]
+            fig_risk.update_traces(marker=dict(colors=colors))
 
-        fig_risk.update_traces(marker=dict(colors=colors))
-
-        st.plotly_chart(fig_risk, use_container_width=True)
+            st.plotly_chart(fig_risk, use_container_width=True)
 
     # kolom 3 jenis kontrak
     with col_chart3:
+        with st.container(border=True):
+            st.subheader("📑 Jenis Kontrak")
 
-        st.subheader("📑 Jenis Kontrak")
+            contract_group = filtered_df["Contract Type"].value_counts().reset_index()
 
-        contract_group = filtered_df["Contract Type"].value_counts().reset_index()
+            contract_group.columns = ["Contract Type", "Count"]
 
-        contract_group.columns = ["Contract Type", "Count"]
+            fig_contract = px.bar(contract_group, x="Contract Type", y="Count")
 
-        fig_contract = px.bar(contract_group, x="Contract Type", y="Count")
+            fig_contract.update_traces(marker_color=["#343187", "#5C92F6"])
 
-        fig_contract.update_traces(marker_color=["#343187", "#5C92F6"])
+            fig_contract.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                xaxis_title="Jenis Kontrak",
+                yaxis_title="Total Pelanggan",
+            )
 
-        fig_contract.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            xaxis_title="Jenis Kontrak",
-            yaxis_title="Total Pelanggan",
-        )
-
-        st.plotly_chart(fig_contract, use_container_width=True)
+            st.plotly_chart(fig_contract, use_container_width=True)

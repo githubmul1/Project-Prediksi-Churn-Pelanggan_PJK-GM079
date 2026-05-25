@@ -11,6 +11,7 @@ if project_root not in sys.path:
 from database.save_output import save_prediction
 from src.inference import predict_churn
 
+
 def render_prediction():
     st.markdown(
         '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">',
@@ -38,79 +39,91 @@ def render_prediction():
             with col1:
                 st.markdown("### 📝 Input Data Pelanggan")
                 customer_name = st.text_input(
-                    "Nama Pelanggan",
-                    value="",
-                    placeholder="Masukkan nama pelanggan"
-                    )
-                
+                    "Nama Pelanggan", value="", placeholder="Masukkan nama pelanggan"
+                )
+
                 age = st.number_input(
-                    "Usia", 18, 100,
-                    value=None,
-                    placeholder="Masukkan usia pelanggan"
-                    )
-                
+                    "Usia", 18, 100, value=None, placeholder="Masukkan usia pelanggan"
+                )
+
                 sub_months = st.number_input(
-                    "Lama Berlangganan (Bulan)", 1, 72,
+                    "Lama Berlangganan (Bulan)",
+                    1,
+                    72,
                     value=None,
-                    placeholder="Masukkan lama berlangganan"
-                    )
-                
+                    placeholder="Masukkan lama berlangganan",
+                )
+
                 monthly_logins = st.number_input(
-                    "Frekuensi Login Bulanan", 0, 50,
+                    "Frekuensi Login Bulanan",
+                    0,
+                    50,
                     value=None,
-                    placeholder="Masukkan rata-rata login bulanan"
-                    )
-                
+                    placeholder="Masukkan rata-rata login bulanan",
+                )
+
                 last_purchase = st.number_input(
-                    "Hari Sejak Pembelian Terakhir", 0, 365,
+                    "Hari Sejak Pembelian Terakhir",
+                    0,
+                    365,
                     value=None,
-                    placeholder="Masukkan transaksi pembelian terakhir"
-                    )
-                
+                    placeholder="Masukkan transaksi pembelian terakhir",
+                )
+
                 usage_time = st.number_input(
-                    "Waktu Penggunaan App (Menit)", 0, 5000,
+                    "Waktu Penggunaan App (Menit)",
+                    0,
+                    5000,
                     value=None,
-                    placeholder="Masukkan waktu penggunaan app"
-                    )
-                
+                    placeholder="Masukkan waktu penggunaan app",
+                )
+
                 monthly_spend = st.number_input(
-                    "Pengeluaran Bulanan (Rupiah)", 0, 10000000,
+                    "Pengeluaran Bulanan (Rupiah)",
+                    0,
+                    10000000,
                     value=None,
-                    placeholder="Masukkan pengeluaran bulanan"
-                    )
-                
+                    placeholder="Masukkan pengeluaran bulanan",
+                )
+
                 discount_pct = st.number_input(
-                    "Persentase Diskon yang Digunakan", 0, 100,
+                    "Persentase Diskon yang Digunakan",
+                    0,
+                    100,
                     value=None,
-                    placeholder="Masukkan persentase diskon yang digunakan"
-                    )
-                
+                    placeholder="Masukkan persentase diskon yang digunakan",
+                )
+
                 support_calls = st.number_input(
-                    "Jumlah Panggilan Komplain", 0, 50,
+                    "Jumlah Panggilan Komplain",
+                    0,
+                    50,
                     value=None,
-                    placeholder="Masukkan jumlah panggilan komplain"
-                    )
-                
+                    placeholder="Masukkan jumlah panggilan komplain",
+                )
+
                 satisfaction = st.slider(
                     "Skor Kepuasan (1-5)",
                     min_value=1,
                     max_value=5,
                     value=1,
-                    help="Geser untuk memilih skor kepuasan pelanggan"
-                    )
-                
+                    help="Geser untuk memilih skor kepuasan pelanggan",
+                )
+
                 contract_type = st.selectbox(
-                    "Jenis Kontrak", ["Monthly", "Annual"],
+                    "Jenis Kontrak",
+                    ["Monthly", "Annual"],
                     index=None,
-                    placeholder="Pilih jenis kontrak"
-                    )
+                    placeholder="Pilih jenis kontrak",
+                )
 
                 submit_button = st.form_submit_button("Analisis Sekarang")
 
             with space:
                 st.markdown(
                     '<div style="border-left: 1px solid rgba(128,128,128,0.25); height: 850px; margin: auto;"></div>',
-                    unsafe_allow_html=True)
+                    unsafe_allow_html=True,
+                )
 
             with col2:
                 st.subheader("📊 Hasil Analisis Prediksi")
@@ -126,16 +139,16 @@ def render_prediction():
                         discount_pct,
                         support_calls,
                         satisfaction,
-                        contract_type
+                        contract_type,
                     ]
-                    
+
                     if any(v is None for v in required_fields):
                         st.warning("⚠️ Harap isi semua kolom yang diperlukan.")
                     elif not customer_name.replace(" ", "").isalpha():
                         st.warning("⚠️ Nama pelanggan harus berupa huruf.")
                     else:
                         input_data = {
-                            "Age": age, 
+                            "Age": age,
                             "Subscription_Duration_Months": sub_months,
                             "Monthly_Logins": monthly_logins,
                             "Last_Purchase_Days_Ago": last_purchase,
@@ -147,66 +160,66 @@ def render_prediction():
                             "Contract_Type": contract_type,
                         }
                         try:
-                            with st.spinner("🤖 AI sedang menganalisis perilaku pelanggan..."):
+                            with st.spinner(
+                                "🤖 AI sedang menganalisis perilaku pelanggan..."
+                            ):
                                 hasil = predict_churn(input_data)
                                 save_prediction(customer_name, input_data, hasil)
                                 st.toast("✅ Prediksi berhasil disimpan!")
-                            
-                            if hasil["Prediksi"] == 1: st.error(f"### {hasil['Label']}")
-                            else: st.success(f"### {hasil['Label']}")
-                            
-                            st.metric("Probabilitas Churn", f"{hasil['Probabilitas Churn']:.1%}")
+
+                            if hasil["Prediksi"] == 1:
+                                st.error(f"### {hasil['Label']}")
+                            else:
+                                st.success(f"### {hasil['Label']}")
+
+                            st.metric(
+                                "Probabilitas Churn",
+                                f"{hasil['Probabilitas Churn']:.1%}",
+                            )
                             risk_colors = {
                                 "Critical Risk": "🔴",
                                 "High Risk": "🟠",
                                 "Medium Risk": "🟡",
-                                "Low Risk": "🟢"}
-                            st.markdown(f"**Level Risiko:** {risk_colors.get(hasil['Level Risiko'], '⚪')} {hasil['Level Risiko']}")
-                            
+                                "Low Risk": "🟢",
+                            }
+                            st.markdown(
+                                f"**Level Risiko:** {risk_colors.get(hasil['Level Risiko'], '⚪')} {hasil['Level Risiko']}"
+                            )
+
                             st.markdown("---")
                             st.subheader("🔍 Analisis Faktor Penyebab")
                             shap_values = hasil.get("Penjelasan SHAP", [])
                             if shap_values:
                                 for item in shap_values:
                                     if item["Kategori"] == "risk":
-                                        st.warning(f"⚠️ **{item['Faktor']}**\n\n**Dampak:** {item['Pengaruh']}\n\n💡 **Rekomendasi:** {item['Rekomendasi']}")
+                                        st.warning(
+                                            f"⚠️ **{item['Faktor']}**\n\n**Dampak:** {item['Pengaruh']}\n\n💡 **Rekomendasi:** {item['Rekomendasi']}"
+                                        )
                                     else:
-                                        st.success(f"✅ **{item['Faktor']}**\n\n**Dampak:** {item['Pengaruh']}\n\n💡 **Rekomendasi:** {item['Rekomendasi']}")
+                                        st.success(
+                                            f"✅ **{item['Faktor']}**\n\n**Dampak:** {item['Pengaruh']}\n\n💡 **Rekomendasi:** {item['Rekomendasi']}"
+                                        )
                             else:
                                 st.info("Tidak ada faktor tambahan.")
                         except Exception as e:
                             st.error(f"Terjadi kesalahan: {e}")
 
     with tab_file:
-        st.markdown("### 📁 Prediksi Massal via File CSV")
-        st.write("Unggah file CSV berisi data pelanggan untuk melakukan prediksi churn secara massal.")
 
-        with st.expander("📋 Lihat Struktur Format Kolom CSV"):
-            st.code(
-                "Nama_Pelanggan,"
-                "Age,"
-                "Subscription_Duration_Months,"
-                "Monthly_Logins," 
-                "Last_Purchase_Days_Ago,"
-                "App_Usage_Time_Min,Monthly_Spend,"
-                "Discount_Usage_Percentage,"
-                "Customer_Support_Calls,"
-                "Satisfaction_Score,"
-                "Contract_Type")
-            st.caption("Pastikan nama kolom sama persis seperti contoh di atas (sensitif huruf besar/kecil).")
-        
         template_header = "Nama_Pelanggan,Age,Subscription_Duration_Months,Monthly_Logins,Last_Purchase_Days_Ago,App_Usage_Time_Min,Monthly_Spend,Discount_Usage_Percentage,Customer_Support_Calls,Satisfaction_Score,Contract_Type\n"
-            
-            # Fungsi tombol Download otomatis untuk file template
+
+        # Fungsi tombol Download otomatis untuk file template
         st.download_button(
             label="📥 Download Template CSV",
             data=template_header.encode("utf-8"),
             file_name="template_prediksi_churn.csv",
             mime="text/csv",
-            help="Klik di sini untuk mengunduh template file CSV kosong."
-            )
-            
-        st.caption("💡 Tip: Setelah diunduh, Anda bisa langsung membukanya di Excel, mengisi data pelanggan di baris bawahnya, lalu menyimpannya kembali dalam format .csv.")
+            help="Klik di sini untuk mengunduh template file CSV kosong.",
+        )
+
+        st.caption(
+            "💡 Tip: Setelah diunduh, Anda bisa langsung membukanya di Excel, mengisi data pelanggan di baris bawahnya, lalu menyimpannya kembali dalam format .csv."
+        )
         uploaded_file = st.file_uploader("Pilih Berkas CSV Anda", type=["csv"])
 
         if uploaded_file is not None:
@@ -219,69 +232,92 @@ def render_prediction():
                 if st.button("🚀 Jalankan Prediksi Massal"):
                     progress_bar = st.progress(0)
                     hasil_bulk = []
-                    
+
                     with st.spinner("🤖 AI sedang memproses seluruh data pelanggan..."):
                         for index, row in input_df.iterrows():
 
                             # Mengekstrak data setiap baris
-                            customer_name_bulk = str(row.get("Nama_Pelanggan", f"Pelanggan {index+1}"))
-                            
+                            customer_name_bulk = str(
+                                row.get("Nama_Pelanggan", f"Pelanggan {index+1}")
+                            )
+
                             row_data = {
                                 "Age": int(row["Age"]),
-                                "Subscription_Duration_Months": int(row["Subscription_Duration_Months"]),
+                                "Subscription_Duration_Months": int(
+                                    row["Subscription_Duration_Months"]
+                                ),
                                 "Monthly_Logins": int(row["Monthly_Logins"]),
-                                "Last_Purchase_Days_Ago": int(row["Last_Purchase_Days_Ago"]),
+                                "Last_Purchase_Days_Ago": int(
+                                    row["Last_Purchase_Days_Ago"]
+                                ),
                                 "App_Usage_Time_Min": int(row["App_Usage_Time_Min"]),
                                 "Monthly_Spend": float(row["Monthly_Spend"]),
-                                "Discount_Usage_Percentage": int(row["Discount_Usage_Percentage"]),
-                                "Customer_Support_Calls": int(row["Customer_Support_Calls"]),
+                                "Discount_Usage_Percentage": int(
+                                    row["Discount_Usage_Percentage"]
+                                ),
+                                "Customer_Support_Calls": int(
+                                    row["Customer_Support_Calls"]
+                                ),
                                 "Satisfaction_Score": int(row["Satisfaction_Score"]),
                                 "Contract_Type": str(row["Contract_Type"]),
                             }
-                            
+
                             # Mengirim data ke fungsi predict_churn
                             hasil_single = predict_churn(row_data)
-                            
+
                             # Menyimpan hasil prediksi ke database
                             save_prediction(customer_name_bulk, row_data, hasil_single)
-                            
+
                             # Menggabungkan informasi untuk tabel review
                             row_data["Nama_Pelanggan"] = customer_name_bulk
                             row_data["Hasil_Prediksi"] = hasil_single["Label"]
-                            row_data["Probabilitas_Churn"] = f"{hasil_single['Probabilitas Churn']:.1%}"
+                            row_data["Probabilitas_Churn"] = (
+                                f"{hasil_single['Probabilitas Churn']:.1%}"
+                            )
                             row_data["Level_Risiko"] = hasil_single["Level Risiko"]
-                            
+
                             hasil_bulk.append(row_data)
-                            
+
                             # Update progress bar biar interaktif
                             progress_bar.progress((index + 1) / len(input_df))
-                    
+
                     # Konversi hasil list menjadi dataframe display
                     df_hasil = pd.DataFrame(hasil_bulk)
-                    
+
                     st.markdown("---")
                     st.subheader("📊 Hasil Prediksi Masal")
 
                     # Membuat paginasi untuk tabel hasil prediksi massal
-                    rows_per_page = 20 # jumlah baris yang ditampilkan per halaman
+                    rows_per_page = 20  # jumlah baris yang ditampilkan per halaman
                     total_rows = len(df_hasil)
-                    total_pages = (total_rows - 1) // rows_per_page + (1 if total_rows % rows_per_page > 0 else 0)
+                    total_pages = (total_rows - 1) // rows_per_page + (
+                        1 if total_rows % rows_per_page > 0 else 0
+                    )
                     col_prev, col_info, col_next = st.columns([1, 2, 1])
-                    
+
                     if "current_page" not in st.session_state:
                         st.session_state.current_page = 1
-                    
+
                     # Navigasi paginasi
                     with col_prev:
-                        if st.button("⬅️ Halaman Sebelumnya") and st.session_state.current_page > 1:
+                        if (
+                            st.button("⬅️ Halaman Sebelumnya")
+                            and st.session_state.current_page > 1
+                        ):
                             st.session_state.current_page -= 1
                             st.rerun()
 
                     with col_info:
-                        st.markdown(f"<div style='text-align: center; font-weight: bold; padding-top: 5px;'>Halaman {st.session_state.current_page} dari {total_pages}</div>", unsafe_allow_html=True)
+                        st.markdown(
+                            f"<div style='text-align: center; font-weight: bold; padding-top: 5px;'>Halaman {st.session_state.current_page} dari {total_pages}</div>",
+                            unsafe_allow_html=True,
+                        )
 
                     with col_next:
-                        if st.button("➡️ Halaman Berikutnya") and st.session_state.current_page < total_pages:
+                        if (
+                            st.button("➡️ Halaman Berikutnya")
+                            and st.session_state.current_page < total_pages
+                        ):
                             st.session_state.current_page += 1
                             st.rerun()
 
@@ -292,11 +328,17 @@ def render_prediction():
 
                     st.dataframe(df_paginated, use_container_width=True)
 
-                    st.caption(f"Menampilkan data pelanggan dari baris {start_idx + 1} hingga {min(end_idx, total_rows)} dari total {total_rows} hasil prediksi.")
-                    
+                    st.caption(
+                        f"Menampilkan data pelanggan dari baris {start_idx + 1} hingga {min(end_idx, total_rows)} dari total {total_rows} hasil prediksi."
+                    )
+
                     # Ringkasan data hasil prediksi massal
-                    total_churn = len(df_hasil[df_hasil["Hasil_Prediksi"].str.contains("Churn")])
-                    st.info(f"💡 Ringkasan Analisis: **{total_churn}** dari **{len(df_hasil)}** pelanggan diprediksi akan Churn.")
-                    
+                    total_churn = len(
+                        df_hasil[df_hasil["Hasil_Prediksi"].str.contains("Churn")]
+                    )
+                    st.info(
+                        f"💡 Ringkasan Analisis: **{total_churn}** dari **{len(df_hasil)}** pelanggan diprediksi akan Churn."
+                    )
+
             except Exception as e:
                 st.error(f"⚠️ Format file tidak sesuai atau terjadi error: {e}")
