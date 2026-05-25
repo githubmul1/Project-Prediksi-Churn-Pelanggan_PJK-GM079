@@ -8,3 +8,4 @@ mlartifacts/
 models/*.pkl
 database/output.db
 src/__init__.py
+views/__init__.py
