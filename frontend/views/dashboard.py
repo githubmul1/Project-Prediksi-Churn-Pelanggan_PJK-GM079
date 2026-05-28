@@ -125,10 +125,10 @@ def render_stats_widgets():
             fig_risk.update_layout(paper_bgcolor="rgba(0,0,0,0)")
 
             color_map = {
-                "Critical Risk": "#FF4B4B",
-                "High Risk": "#FF7F50",
-                "Medium Risk": "#FFD700",
-                "Low Risk": "#32CD32",
+                "Critical Risk": "#BF2C34",
+                "High Risk": "#D35400",
+                "Medium Risk": "#2980B9",
+                "Low Risk": "#27AE60",
             }
 
             colors = [color_map.get(x, "#3B82F6") for x in risk_group["Risk Level"]]
