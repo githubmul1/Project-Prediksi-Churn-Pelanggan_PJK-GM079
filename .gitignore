@@ -11,3 +11,4 @@ src/__init__.py
 views/__init__.py
 huggingface.yml
 huggingface.txt
+src/metrics.json

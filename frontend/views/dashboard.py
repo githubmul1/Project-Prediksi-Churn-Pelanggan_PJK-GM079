@@ -126,7 +126,7 @@ def render_stats_widgets():
 
             color_map = {
                 "Critical Risk": "#BF2C34",
-                "High Risk": "#D35400",
+                "High Risk": "#FFA500",
                 "Medium Risk": "#2980B9",
                 "Low Risk": "#27AE60",
             }

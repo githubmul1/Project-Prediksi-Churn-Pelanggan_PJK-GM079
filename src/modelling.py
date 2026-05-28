@@ -103,9 +103,10 @@ full_pipeline = Pipeline(
         (
             "model",
             RandomForestClassifier(
-                n_estimators=150,
-                max_depth=15,
-                min_samples_split=10,
+                n_estimators=300,
+                max_depth=20,
+                min_samples_split=4,
+                min_samples_leaf=2,
                 class_weight="balanced",
                 n_jobs=1,
                 random_state=42,
