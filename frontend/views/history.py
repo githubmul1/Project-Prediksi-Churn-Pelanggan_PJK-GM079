@@ -21,6 +21,33 @@ def render_history():
     css_path = os.path.abspath(os.path.join(current_dir, "../assets/css/style.css"))
     local_css(css_path)
 
+    st.markdown("""
+            <style>
+            .flex-pagination-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                margin: 15px 0;
+                gap: 10px;
+            }
+            .page-info-box {
+                flex-grow: 1;
+                text-align: center;
+                font-weight: bold;
+                font-size: 14px;
+                padding: 8px 5px;
+                background-color: rgba(128, 128, 128, 0.08);
+                border-radius: 6px;
+                color: #333333;
+                white-space: nowrap;
+            }
+            div[data-testid="stHorizontalBlock"] {
+                width: 100% !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
     col = st.columns(1)
     with col[0]:
          st.markdown(
@@ -37,9 +64,9 @@ def render_history():
     if df is None or df.empty:
         st.info("💡 Belum ada data riwayat prediksi di dalam database.")
         return
-
-    df_clean = df.copy()
-    df_clean.columns = df_clean.columns.str.replace('_', ' ').str.title()
+    
+    if "current_page_history" not in st.session_state:
+        st.session_state.current_page_history = 1
 
     # Tabel Inferensi Lengkap Dengan Filter
     col_space, col_fil = st.columns([3, 1])
@@ -70,26 +97,26 @@ def render_history():
     rows_per_page_history = 10
     total_rows_history = len(df_clean_filtered)
     total_pages = (total_rows_history - 1) // rows_per_page_history + (1 if total_rows_history % rows_per_page_history > 0 else 0)
-    col_prev, col_info, col_next = st.columns([1, 2, 1])
                     
-    if "current_page" not in st.session_state:
-        st.session_state.current_page = 1
+    if "current_page_history" not in st.session_state:
+        st.session_state.current_page_history = 1
 
-    # Navigasi paginasi               
+    # Navigasi paginasi
+    col_prev, col_info, col_next = st.columns([0.3, 1.4, 0.3], gap="small")               
     with col_prev:
-        if st.button("⬅️ Halaman Sebelumnya") and st.session_state.current_page > 1:
-            st.session_state.current_page -= 1
+        if st.button("⬅️", use_container_width=True, disabled=(st.session_state.current_page_history <= 1), key="prev_history"):
+            st.session_state.current_page_history -= 1
             st.rerun()
 
     with col_info:
-        st.markdown(f"<div style='text-align: center; font-weight: bold; padding-top: 5px;'>Halaman {st.session_state.current_page} dari {total_pages}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: center; font-weight: bold; padding-top: 5px;'>Halaman {st.session_state.current_page_history} dari {total_pages}</div>", unsafe_allow_html=True)
 
     with col_next:
-        if st.button("➡️ Halaman Berikutnya") and st.session_state.current_page < total_pages:
-            st.session_state.current_page += 1
+        if st.button("➡️", use_container_width=True, disabled=(st.session_state.current_page_history >= total_pages), key="next_history"):
+            st.session_state.current_page_history += 1
             st.rerun()
 
-    start_idx = (st.session_state.current_page - 1) * rows_per_page_history
+    start_idx = (st.session_state.current_page_history - 1) * rows_per_page_history
     end_idx = start_idx + rows_per_page_history
     df_paginated = df_clean_filtered.iloc[start_idx:end_idx]
 
