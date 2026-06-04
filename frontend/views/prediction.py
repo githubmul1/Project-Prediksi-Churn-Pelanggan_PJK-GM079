@@ -10,8 +10,6 @@ if project_root not in sys.path:
 
 from database.save_output import save_prediction
 from src.inference import predict_churn
-
-
 def render_prediction():
     st.markdown(
         '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">',
@@ -39,49 +37,55 @@ def render_prediction():
             with col1:
                 st.markdown("### 📝 Input Data Pelanggan")
                 customer_name = st.text_input(
-                    "Nama Pelanggan", value="", placeholder="Masukkan nama pelanggan"
+                    "Nama Pelanggan",
+                    value="",
+                    placeholder="Masukkan nama pelanggan"
                 )
 
                 age = st.number_input(
-                    "Usia", 18, 100, value=None, placeholder="Masukkan usia pelanggan"
+                    "Usia",
+                    min_value=18,
+                    max_value=100,
+                    value=None,
+                    placeholder="Masukkan usia pelanggan"
                 )
 
                 sub_months = st.number_input(
                     "Lama Berlangganan (Bulan)",
-                    1,
-                    72,
+                    min_value=1,
+                    max_value=72,
                     value=None,
                     placeholder="Masukkan lama berlangganan",
                 )
 
                 monthly_logins = st.number_input(
                     "Frekuensi Login Bulanan",
-                    0,
-                    50,
+                    min_value=0,
+                    max_value=50,
                     value=None,
                     placeholder="Masukkan rata-rata login bulanan",
                 )
 
                 last_purchase = st.number_input(
                     "Hari Sejak Pembelian Terakhir",
-                    0,
-                    365,
+                    min_value=0,
+                    max_value=365,
                     value=None,
                     placeholder="Masukkan transaksi pembelian terakhir",
                 )
 
                 usage_time = st.number_input(
                     "Waktu Penggunaan App (Menit)",
-                    0,
-                    5000,
+                    min_value=0,
+                    max_value=5000,
                     value=None,
                     placeholder="Masukkan waktu penggunaan app",
                 )
 
                 monthly_spend = st.number_input(
                     "Pengeluaran Bulanan (Rupiah)",
-                    0,
-                    10000000,
+                    min_value=0,
+                    max_value=10000000,
                     value=None,
                     placeholder="Masukkan pengeluaran bulanan",
                 )
@@ -106,7 +110,6 @@ def render_prediction():
                     "Skor Kepuasan (1-5)",
                     min_value=1,
                     max_value=5,
-                    value=1,
                     help="Geser untuk memilih skor kepuasan pelanggan",
                 )
 
@@ -179,7 +182,7 @@ def render_prediction():
                             risk_colors = {
                                 "Critical Risk": "🔴",
                                 "High Risk": "🟠",
-                                "Medium Risk": "🟡",
+                                "Medium Risk": "🔵",
                                 "Low Risk": "🟢",
                             }
                             st.markdown(
@@ -282,13 +285,35 @@ def render_prediction():
                             progress_bar.progress((index + 1) / len(input_df))
 
                     # Konversi hasil list menjadi dataframe display
-                    df_hasil = pd.DataFrame(hasil_bulk)
+                    df_mentah = pd.DataFrame(hasil_bulk)
+                    kolom_urut = [
+                        "Nama_Pelanggan",
+                        "Age",
+                        "Subscription_Duration_Months",
+                        "Monthly_Logins",
+                        "Last_Purchase_Days_Ago",
+                        "App_Usage_Time_Min",
+                        "Monthly_Spend",
+                        "Discount_Usage_Percentage",
+                        "Customer_Support_Calls",
+                        "Satisfaction_Score",
+                        "Contract_Type",
+                        "Hasil_Prediksi",
+                        "Probabilitas_Churn",
+                        "Level_Risiko",
+                    ]
+
+                    st.session_state.df_hasil_bulk = df_mentah[kolom_urut]
+                    st.session_state.current_page = 1 
+
+                if "df_hasil_bulk" in st.session_state:
+                    df_hasil = st.session_state.df_hasil_bulk
 
                     st.markdown("---")
                     st.subheader("📊 Hasil Prediksi Masal")
 
                     # Membuat paginasi untuk tabel hasil prediksi massal
-                    rows_per_page = 20  # jumlah baris yang ditampilkan per halaman
+                    rows_per_page = 10  # jumlah baris yang ditampilkan per halaman
                     total_rows = len(df_hasil)
                     total_pages = (total_rows - 1) // rows_per_page + (
                         1 if total_rows % rows_per_page > 0 else 0
