@@ -4,9 +4,47 @@ Sistem aplikasi berbasis data (_data-driven application_) yang dirancang untuk m
 
 ---
 
-## 👥 Anggota Tim Pengembangan
+## 📦 Petunjuk Running Aplikasi dari Scratch
 
-- **Tim PJK-GM079**
+1. Pastikan python environment Conda telah terinstall
+2. Buat direktori "data" dan "models" di root direktori
+3. Unduh dataset dari https://www.kaggle.com/datasets/bertnardomariouskono/e-commerce-customer-churn-predictor/data.
+4. Letakkan dataset di dalam direktori data. Rename sebagai ecommerce_customer_churn_data.csv
+5. Dari direktori root ketik perintah berikut di terminal :
+
+```Terminal
+conda env create -f environment.yml # membuat conda environment dari .yml
+mlflow ui # menjalankan mlflow secara default
+python -m src.modelling # menjalankan modellling
+python -m streamlit run frontend/streamlit_app.py # menjalankan streamlit
+
+```
+
+6. Browser akan membuka otomatis tautan aplikasi
+
+---
+
+## 🔗 Tautan aplikasi siap pakai
+
+Klik https://matnaryo-churn.hf.space/
+
+---
+
+## 📎 Tautan model .pkl
+
+Klik https://drive.google.com/file/d/1oMpuuOGV_wMW2ObNHUFJxr1dBwnD6sSo/view?usp=drive_link
+
+---
+
+## 👥 Anggota Tim Pengembangan PJK-GM079
+
+| NO  | ID Pijak      | Nama                  | Email                             |
+| :-- | :------------ | :-------------------- | :-------------------------------- |
+| 1   | APC847D6Y0007 | Hervan Wandri         | evandrie13@gmail.com              |
+| 2   | APC809D6Y0033 | Rohmat Sunaryo        | rohmat.sunaryo@gmail.com          |
+| 3   | APC013D6Y0094 | Hafiz Satria          | azizanhafiz123@gmail.com          |
+| 4   | APC223D6Y0256 | Mulya Adi Putra       | lptpmul1@gmail.com                |
+| 5   | APC240D6X0093 | Ruth Anastasya Harefa | ruth.anastasya.h@mail.ukrim.ac.id |
 
 ---
 
@@ -102,3 +140,7 @@ Project-Prediksi-Churn-Pelanggan_PJK-GM079/
 ├── .gitignore
 └── README.md
 └── link_kaggle.txt t
+
+```
+
+```
