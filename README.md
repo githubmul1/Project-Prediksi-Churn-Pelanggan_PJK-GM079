@@ -6,11 +6,8 @@ Sistem aplikasi berbasis data (_data-driven application_) yang dirancang untuk m
 
 ## 📦 Petunjuk Running Aplikasi dari Scratch
 
-1. Pastikan python environment Conda telah terinstall
-2. Buat direktori "data" dan "models" di root direktori
-3. Unduh dataset dari https://www.kaggle.com/datasets/bertnardomariouskono/e-commerce-customer-churn-predictor/data.
-4. Letakkan dataset di dalam direktori data. Rename sebagai ecommerce_customer_churn_data.csv
-5. Dari direktori root ketik perintah berikut di terminal :
+1. Pastikan package python Conda telah terinstall
+2. Dari direktori root ketik perintah berikut di terminal :
 
 ```Terminal
 conda env create -f environment.yml # membuat conda environment dari .yml
