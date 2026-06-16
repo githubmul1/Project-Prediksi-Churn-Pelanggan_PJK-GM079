@@ -2,11 +2,8 @@ __pycache__/
 *.pyc
 .DS_Store
 .vscode/
-data/
 mlflow.db
 mlartifacts/
-models/*.pkl
-database/output.db
 src/__init__.py
 views/__init__.py
 huggingface.yml
